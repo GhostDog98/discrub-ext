@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Stack from "@mui/material/Stack";
-import DateTimePicker from "../../../common-components/date-time-picker/date-time-picker";
+import { DateTimePicker } from "discrub-lib/common";
 import {
   FormControl,
   InputLabel,
@@ -40,8 +40,8 @@ const FilterComponent = ({
       ),
     );
 
-  const [startTime, setStartTime] = useState<Date | Maybe>(null);
-  const [endTime, setEndTime] = useState<Date | Maybe>(null);
+  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [endTime, setEndTime] = useState<Date | null>(null);
   const [inverse, setInverse] = useState(0);
   const [messageTypes, setMessageTypes] = useState<string[]>([]);
   const [messageTags, setMessageTags] = useState<string[]>([]);

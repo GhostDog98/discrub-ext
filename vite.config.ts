@@ -5,6 +5,16 @@ import { crx, ManifestV3Export } from "@crxjs/vite-plugin";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  resolve: {
+    dedupe: [
+      "react",
+      "react-dom",
+      "@emotion/react",
+      "@emotion/styled",
+      "@mui/material",
+      "@mui/x-date-pickers",
+    ],
+  },
   build: {
     rollupOptions: {
       input: { main: "index.html", button_injection: "button_injection.html" },
