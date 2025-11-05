@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
-import Table, {
-  OrderProps,
-  TableColumn,
-  TableRow,
-} from "../../common-components/table/table";
 import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
 import {
   Button,
@@ -27,7 +22,8 @@ import {
 } from "../../utils";
 import PauseButton from "../../components/pause-button";
 import CancelButton from "../../components/cancel-button";
-import { Tooltip } from "discrub-lib/common";
+import { Tooltip, Table } from "discrub-lib/common";
+import type { OrderProps, TableColumn, TableRow } from "discrub-lib/common";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import { useUserSlice } from "../../features/user/use-user-slice";
@@ -36,7 +32,7 @@ import { useChannelSlice } from "../../features/channel/use-channel-slice";
 import { useMessageSlice } from "../../features/message/use-message-slice";
 import { useAppSlice } from "../../features/app/use-app-slice";
 import Message from "../../classes/message";
-import { SortDirection } from "../../enum/sort-direction";
+import { SortDirection } from "discrub-lib/common-enum";
 import TableMessage from "../../components/table-message";
 import AttachmentModal from "../../components/attachment-modal";
 import EmbedModal from "../../components/embed-modal";
