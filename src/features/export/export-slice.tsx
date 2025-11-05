@@ -62,7 +62,7 @@ import Guild from "../../classes/guild";
 import Papa from "papaparse";
 import { flatten } from "flat";
 import Channel from "../../classes/channel";
-import DiscordService from "../../services/discord-service";
+import { DiscordService } from "discrub-lib/services";
 import { MediaType } from "../../enum/media-type";
 import { isAttachment } from "../../app/guards.ts";
 import hljs from "highlight.js";

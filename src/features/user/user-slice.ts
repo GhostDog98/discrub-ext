@@ -3,7 +3,7 @@ import { sendChromeMessage } from "../../services/chrome-service";
 import { UserState } from "./user-types";
 import { AppThunk } from "../../app/store";
 import { User } from "../../classes/user";
-import DiscordService from "../../services/discord-service";
+import { DiscordService } from "discrub-lib/services";
 import { setExportUserMap } from "../export/export-slice.tsx";
 import { getPreFilterUsers } from "../guild/guild-slice.ts";
 import {

@@ -11,7 +11,7 @@ import { sortByProperty } from "../../utils";
 import { GuildState } from "./guild-types";
 import { PreFilterUser } from "../dm/dm-types";
 import { AppThunk } from "../../app/store";
-import DiscordService from "../../services/discord-service";
+import { DiscordService } from "discrub-lib/services";
 import { resetPurgeRemovalFrom } from "../app/app-slice.ts";
 
 const initialState: GuildState = {

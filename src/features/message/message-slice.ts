@@ -67,7 +67,7 @@ import { QueryStringParam } from "../../enum/query-string-param";
 import { Reaction } from "../../classes/reaction";
 import { ReactionType } from "../../enum/reaction-type";
 import { MessageCategory } from "../../enum/message-category";
-import DiscordService from "../../services/discord-service";
+import { DiscordService } from "discrub-lib/services";
 import { IsPinnedType } from "../../enum/is-pinned-type.ts";
 import {
   ATTACHMENT_REQUIRES_ENTIRE_MSG_REMOVAL,

@@ -4,7 +4,7 @@ import Channel from "../../classes/channel";
 import { ChannelState } from "./channel-types";
 import { AppThunk } from "../../app/store";
 import { ChannelType } from "../../enum/channel-type";
-import DiscordService from "../../services/discord-service";
+import { DiscordService } from "discrub-lib/services";
 
 const initialState: ChannelState = {
   channels: [],

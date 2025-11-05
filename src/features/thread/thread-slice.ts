@@ -6,7 +6,7 @@ import {
 } from "./thread-types";
 import { AppThunk } from "../../app/store";
 import Channel from "../../classes/channel";
-import DiscordService from "../../services/discord-service";
+import { DiscordService } from "discrub-lib/services";
 import { setStatus } from "../app/app-slice.ts";
 import { getThreadEntityName } from "../../utils.ts";
 
