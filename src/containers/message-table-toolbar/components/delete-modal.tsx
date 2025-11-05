@@ -25,7 +25,7 @@ import { isMessage, isNonNullable } from "../../../app/guards";
 import { DeleteConfiguration } from "../../../features/message/message-types";
 import { AppTask } from "../../../features/app/app-types";
 import MessageMock from "../../message-mock/message-mock";
-import EnhancedAutocomplete from "../../../common-components/enhanced-autocomplete/enhanced-autocomplete.tsx";
+import { EnhancedAutocomplete } from "discrub-lib/common";
 import {
   ExportReactionMap,
   ExportUserMap,

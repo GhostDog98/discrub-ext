@@ -1,6 +1,11 @@
 import { useState } from "react";
 import Stack from "@mui/material/Stack";
-import { DateTimePicker } from "discrub-lib/common";
+import {
+  DateTimePicker,
+  EnhancedAutocomplete,
+  Tooltip,
+  MultiValueSelect,
+} from "discrub-lib/common";
 import {
   FormControl,
   InputLabel,
@@ -8,16 +13,13 @@ import {
   MenuItem,
   FilledInput,
 } from "@mui/material";
-import Tooltip from "../../../common-components/tooltip/tooltip";
 import { sortByProperty } from "../../../utils";
 import { Filter } from "../../../features/message/message-types";
 import { FilterName } from "../../../enum/filter-name";
 import { FilterType } from "../../../enum/filter-type";
 import Channel from "../../../classes/channel";
-import MultiValueSelect from "../../../common-components/multi-value-select/multi-value-select";
 import { MessageType } from "../../../enum/message-type";
 import { MessageCategory } from "../../../enum/message-category";
-import EnhancedAutocomplete from "../../../common-components/enhanced-autocomplete/enhanced-autocomplete.tsx";
 
 type FilterComponentProps = {
   isDm: boolean;

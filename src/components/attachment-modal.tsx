@@ -18,7 +18,7 @@ import {
 import { AppTask } from "../features/app/app-types";
 import Attachment from "../classes/attachment";
 import { isMessage } from "../app/guards";
-import Tooltip from "../common-components/tooltip/tooltip";
+import { Tooltip } from "discrub-lib/common";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { entityIsImage } from "../utils";
 import {

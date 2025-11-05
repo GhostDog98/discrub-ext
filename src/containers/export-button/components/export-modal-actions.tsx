@@ -4,7 +4,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import PauseButton from "../../../components/pause-button";
 import CancelButton from "../../../components/cancel-button";
 import { ExportType } from "../../../enum/export-type";
-import Tooltip from "../../../common-components/tooltip/tooltip";
+import { Tooltip } from "discrub-lib/common";
 
 type ActionsProps = {
   handleExportSelected: (val: ExportType) => void;

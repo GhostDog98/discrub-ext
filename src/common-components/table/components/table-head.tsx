@@ -3,7 +3,7 @@ import TableCell from "@mui/material/TableCell";
 import { TableHead as TbHead } from "@mui/material";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
-import Tooltip from "../../tooltip/tooltip";
+import { Tooltip } from "discrub-lib/common";
 import Checkbox from "@mui/material/Checkbox";
 import { visuallyHidden } from "@mui/utils";
 import { TableColumn } from "../table";

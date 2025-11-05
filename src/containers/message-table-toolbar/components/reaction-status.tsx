@@ -6,7 +6,7 @@ import {
   resolveAvatarUrl,
   resolveEmojiUrl,
 } from "../../../utils.ts";
-import ImgAdornment from "../../../components/img-adornment.tsx";
+import { ImgAdornment } from "discrub-lib/common";
 import { Emoji } from "../../../classes/emoji.ts";
 import { AppTaskEntity } from "../../../features/app/app-types.ts";
 import { ExportUserMap } from "../../../features/export/export-types.ts";

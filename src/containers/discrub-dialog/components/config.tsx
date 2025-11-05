@@ -1,13 +1,12 @@
 import { FormControl, Stack, SxProps, TextField, Theme } from "@mui/material";
 import { setSetting } from "../../../services/chrome-service";
 import { DiscrubSetting } from "../../../enum/discrub-setting";
-import Tooltip from "../../../common-components/tooltip/tooltip";
+import { EnhancedAutocomplete, Tooltip } from "discrub-lib/common";
 import { SortDirection } from "../../../enum/sort-direction";
 import FormatListNumberedRtlIcon from "@mui/icons-material/FormatListNumberedRtl";
 import { ResolutionType } from "../../../enum/resolution-type";
 import { MediaType } from "../../../enum/media-type";
 import { UserDataRefreshRate } from "../../../enum/user-data-refresh-rate.ts";
-import EnhancedAutocomplete from "../../../common-components/enhanced-autocomplete/enhanced-autocomplete.tsx";
 import { defaultSettings } from "../../../features/app/app-slice.ts";
 import { useDmSlice } from "../../../features/dm/use-dm-slice.ts";
 import { useGuildSlice } from "../../../features/guild/use-guild-slice.ts";

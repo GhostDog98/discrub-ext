@@ -1,7 +1,6 @@
-import Tooltip from "../common-components/tooltip/tooltip";
+import { EnhancedAutocomplete, Tooltip } from "discrub-lib/common";
 import { useDmSlice } from "../features/dm/use-dm-slice";
 import { useGuildSlice } from "../features/guild/use-guild-slice";
-import EnhancedAutocomplete from "../common-components/enhanced-autocomplete/enhanced-autocomplete.tsx";
 import { useMessageSlice } from "../features/message/use-message-slice.ts";
 import { useState } from "react";
 import { useUserSlice } from "../features/user/use-user-slice.ts";

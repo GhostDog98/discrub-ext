@@ -1,6 +1,5 @@
 import { useMessageSlice } from "../../../features/message/use-message-slice";
-import EnhancedAutocomplete from "../../../common-components/enhanced-autocomplete/enhanced-autocomplete.tsx";
-import Tooltip from "../../../common-components/tooltip/tooltip.tsx";
+import { EnhancedAutocomplete, Tooltip } from "discrub-lib/common";
 import { IsPinnedType } from "../../../enum/is-pinned-type.ts";
 import Box from "@mui/material/Box";
 

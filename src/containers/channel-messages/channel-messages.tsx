@@ -27,7 +27,7 @@ import {
 } from "../../utils";
 import PauseButton from "../../components/pause-button";
 import CancelButton from "../../components/cancel-button";
-import Tooltip from "../../common-components/tooltip/tooltip";
+import { Tooltip } from "discrub-lib/common";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import { useUserSlice } from "../../features/user/use-user-slice";
@@ -45,7 +45,7 @@ import ReactionModal from "../../components/reaction-modal";
 import SearchCriteria, {
   SearchCriteriaComponentType,
 } from "../search-criteria/search-criteria.tsx";
-import EnhancedAutocomplete from "../../common-components/enhanced-autocomplete/enhanced-autocomplete.tsx";
+import { EnhancedAutocomplete } from "discrub-lib/common";
 import { EntityHint } from "../../enum/entity-hint.ts";
 import AppStatus from "../app-status/app-status.tsx";
 

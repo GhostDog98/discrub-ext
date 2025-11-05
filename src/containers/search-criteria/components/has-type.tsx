@@ -1,7 +1,6 @@
-import Tooltip from "../../../common-components/tooltip/tooltip";
+import { EnhancedAutocomplete, Tooltip } from "discrub-lib/common";
 import { useMessageSlice } from "../../../features/message/use-message-slice";
 import { HasType as HasTypeEnum } from "../../../enum/has-type";
-import EnhancedAutocomplete from "../../../common-components/enhanced-autocomplete/enhanced-autocomplete.tsx";
 
 type HasTypeProps = {
   disabled: boolean;

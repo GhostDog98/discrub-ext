@@ -1,6 +1,6 @@
 import Avatar from "@mui/material/Avatar";
 import Chip, { ChipProps } from "@mui/material/Chip";
-import Tooltip from "../common-components/tooltip/tooltip";
+import { Tooltip } from "discrub-lib/common";
 
 const MessageChip = (
   props: ChipProps & { username: string; avatarSrc: string; content: string },

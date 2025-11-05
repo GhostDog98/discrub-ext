@@ -1,6 +1,6 @@
 import { sendChromeMessage } from "../../../services/chrome-service";
 import IconButton from "@mui/material/IconButton";
-import Tooltip from "../../../common-components/tooltip/tooltip";
+import { Tooltip } from "discrub-lib/common";
 import Box from "@mui/material/Box";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useMessageSlice } from "../../../features/message/use-message-slice.ts";
-import Tooltip from "../../../common-components/tooltip/tooltip.tsx";
-import EnhancedAutocomplete from "../../../common-components/enhanced-autocomplete/enhanced-autocomplete.tsx";
+import { EnhancedAutocomplete, Tooltip } from "discrub-lib/common";
 import { useChannelSlice } from "../../../features/channel/use-channel-slice.ts";
 import {
   filterBoth,

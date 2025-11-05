@@ -16,14 +16,13 @@ import SearchCriteria, {
   defaultCriteria,
   SearchCriteriaComponentType,
 } from "../../search-criteria/search-criteria.tsx";
-import EnhancedAutocomplete from "../../../common-components/enhanced-autocomplete/enhanced-autocomplete.tsx";
+import { EnhancedAutocomplete, Tooltip } from "discrub-lib/common";
 import {
   filterBoth,
   getEntityHint,
   getIconUrl,
   getSortedChannels,
 } from "../../../utils.ts";
-import Tooltip from "../../../common-components/tooltip/tooltip.tsx";
 import { EntityHint } from "../../../enum/entity-hint.ts";
 
 type BulkContentProps = {
