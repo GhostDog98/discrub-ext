@@ -8,9 +8,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { format } from "date-fns-tz";
 import { IconButton, useTheme } from "@mui/material";
 import { getColor } from "../utils";
-import Embed from "../classes/embed";
+import type { Embed, EmbedFieldObject } from "discrub-lib/types/discord-types";
 import { useExportSlice } from "../features/export/use-export-slice";
-import { EmbedFieldObject } from "../types/embed-field-object";
 import { useAppSlice } from "../features/app/use-app-slice.ts";
 
 type WebhookEmbedMockProps = {

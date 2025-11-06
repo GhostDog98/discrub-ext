@@ -20,14 +20,14 @@ import {
   deleteReaction as deleteReactionAction,
 } from "./message-slice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import type { SearchCriteria } from "discrub-lib/types/discrub-types";
 import {
   DeleteConfiguration,
   Filter,
   MessageSearchOptions,
-  SearchCriteria,
 } from "./message-types";
 import { SortDirection } from "../../enum/sort-direction";
-import Message from "../../classes/message";
+import type { Message } from "discrub-lib/types/discord-types";
 import Attachment from "../../classes/attachment";
 
 const useMessageSlice = () => {

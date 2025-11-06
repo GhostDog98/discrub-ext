@@ -8,7 +8,7 @@ import ExportUtils from "../../features/export/export-utils";
 import { useGuildSlice } from "../../features/guild/use-guild-slice";
 import { useDmSlice } from "../../features/dm/use-dm-slice";
 import { ExportType } from "../../enum/export-type";
-import Channel from "../../classes/channel";
+import type { Channel } from "discrub-lib/types/discord-types";
 import DefaultContent from "./components/default-content";
 import { useMessageSlice } from "../../features/message/use-message-slice";
 import BulkContent from "./components/bulk-content";

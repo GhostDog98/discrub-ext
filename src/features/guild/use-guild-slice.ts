@@ -11,7 +11,7 @@ import {
   getPreFilterUsers as getPreFilterUsersAction,
 } from "./guild-slice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import Guild from "../../classes/guild";
+import type { Guild } from "discrub-lib/types/discord-types";
 import { PreFilterUser } from "../dm/dm-types";
 
 const useGuildSlice = () => {

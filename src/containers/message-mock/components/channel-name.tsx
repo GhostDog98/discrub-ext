@@ -1,6 +1,5 @@
 import { Typography, useTheme } from "@mui/material";
-import Channel from "../../../classes/channel";
-import Message from "../../../classes/message";
+import type { Channel, Message } from "discrub-lib/types/discord-types";
 
 type ChannelNameProps = {
   channels: Channel[];

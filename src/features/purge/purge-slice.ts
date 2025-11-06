@@ -15,15 +15,13 @@ import {
 } from "../app/app-slice";
 import { PurgeState, PurgeStatus } from "./purge-types";
 import { AppThunk } from "../../app/store";
-import Channel from "../../classes/channel";
-import Message from "../../classes/message";
+import type { Channel, Message, Guild } from "discrub-lib/types/discord-types";
 import {
   isRemovableMessage,
   isSearchComplete,
   stringToBool,
   stringToTypedArray,
 } from "../../utils";
-import Guild from "../../classes/guild.ts";
 import { isGuild } from "../../app/guards.ts";
 import { MessageData, SearchResultData } from "../message/message-types.ts";
 import { OFFSET_INCREMENT, START_OFFSET } from "../message/contants.ts";
@@ -159,7 +157,7 @@ export const _purgeMessages =
         liftThreadRestrictions(message.channel_id, skipThreadIds, threads),
       );
 
-      let modifyEntity = Object.assign(new Message({ ...message }), {
+      let modifyEntity = Object.assign({ ...message }, {
         _index: index + 1,
         _total: Number(totalMessages) - index,
         _status: PurgeStatus.IN_PROGRESS,

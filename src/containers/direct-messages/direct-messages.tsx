@@ -24,8 +24,7 @@ import { useUserSlice } from "../../features/user/use-user-slice";
 import { useDmSlice } from "../../features/dm/use-dm-slice";
 import { useMessageSlice } from "../../features/message/use-message-slice";
 import { useAppSlice } from "../../features/app/use-app-slice";
-import Channel from "../../classes/channel";
-import Message from "../../classes/message";
+import type { Channel, Message } from "discrub-lib/types/discord-types";
 import { SortDirection } from "discrub-lib/common-enum";
 import TableMessage from "../../components/table-message";
 import AttachmentModal from "../../components/attachment-modal";
@@ -141,7 +140,7 @@ function DirectMessages() {
 
   const getSorted = (val: Channel[]) => {
     return val
-      .map((d) => new Channel({ ...d }))
+      .map((d) => ({ ...d }))
       .sort((a, b) =>
         sortByProperty(
           { name: String(a.name).toLowerCase() },

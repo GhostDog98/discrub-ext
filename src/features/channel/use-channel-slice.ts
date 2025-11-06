@@ -10,7 +10,7 @@ import {
   loadChannel as loadChannelAction,
 } from "./channel-slice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import Channel from "../../classes/channel";
+import type { Channel } from "discrub-lib/types/discord-types";
 
 const useChannelSlice = () => {
   const dispatch = useAppDispatch();

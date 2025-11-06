@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { resetFilters, resetMessageData } from "../message/message-slice";
-import Channel from "../../classes/channel";
+import type { Channel } from "discrub-lib/types/discord-types";
 import { DmState, PreFilterUser, SetSelectedDmsProps } from "./dm-types";
 import { AppThunk } from "../../app/store";
 import { DiscordService } from "discrub-lib/services";

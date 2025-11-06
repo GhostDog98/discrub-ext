@@ -1,10 +1,8 @@
-import Channel from "../../classes/channel";
-import Message from "../../classes/message";
+import type { Channel, Message } from "discrub-lib/types/discord-types";
+import type { SearchCriteria } from "discrub-lib/types/discrub-types";
 import { FilterName } from "../../enum/filter-name";
 import { FilterType } from "../../enum/filter-type";
-import { HasType } from "../../enum/has-type";
 import { SortDirection } from "../../enum/sort-direction";
-import { IsPinnedType } from "../../enum/is-pinned-type.ts";
 
 export type MessageState = {
   messages: Message[]; // Message objects
@@ -72,15 +70,4 @@ export type MessageSearchOptions = {
   startOffSet?: number;
   endOffSet?: number;
   searchCriteriaOverrides?: Partial<SearchCriteria>;
-};
-
-export type SearchCriteria = {
-  searchBeforeDate: Date | Maybe;
-  searchAfterDate: Date | Maybe;
-  searchMessageContent: string | Maybe;
-  selectedHasTypes: HasType[];
-  userIds: string[];
-  mentionIds: string[];
-  channelIds: string[];
-  isPinned: IsPinnedType;
 };

@@ -17,7 +17,7 @@ import { sortByProperty } from "../../../utils";
 import { Filter } from "../../../features/message/message-types";
 import { FilterName } from "../../../enum/filter-name";
 import { FilterType } from "../../../enum/filter-type";
-import Channel from "../../../classes/channel";
+import type { Channel } from "discrub-lib/types/discord-types";
 import { MessageType } from "../../../enum/message-type";
 import { MessageCategory } from "../../../enum/message-category";
 
@@ -33,7 +33,7 @@ const FilterComponent = ({
   threads,
 }: FilterComponentProps) => {
   const sortedThreads = threads
-    .map((t) => new Channel({ ...t }))
+    .map((t) => ({ ...t }))
     .sort((a, b) =>
       sortByProperty(
         { name: a.name?.toLowerCase() },

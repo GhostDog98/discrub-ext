@@ -4,8 +4,7 @@ import {
   purge as purgeAction,
 } from "./purge-slice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import Channel from "../../classes/channel";
-import Guild from "../../classes/guild.ts";
+import type { Channel, Guild } from "discrub-lib/types/discord-types";
 
 const usePurgeSlice = () => {
   const dispatch = useAppDispatch();

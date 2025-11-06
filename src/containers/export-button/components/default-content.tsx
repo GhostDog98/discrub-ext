@@ -1,7 +1,7 @@
 import { DialogContent, DialogContentText, Typography } from "@mui/material";
+import type { AppSettings } from "discrub-lib/types/discrub-types";
 import ExportProgress from "./export-progress.tsx";
 import { DiscrubSetting } from "../../../enum/discrub-setting";
-import { AppSettings } from "../../../features/app/app-types";
 import EnhancedTabs, {
   EnhancedTab,
 } from "../../../common-components/enhanced-tabs/enhanced-tabs.tsx";

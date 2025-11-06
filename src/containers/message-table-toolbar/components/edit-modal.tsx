@@ -19,7 +19,6 @@ import CancelButton from "../../../components/cancel-button";
 import { AppTask } from "../../../features/app/app-types";
 import { isMessage } from "../../../app/guards";
 import MessageMock from "../../message-mock/message-mock";
-import Message from "../../../classes/message";
 import { MISSING_PERMISSION_TO_MODIFY } from "../../../features/message/contants.ts";
 
 type EditModalProps = {
@@ -102,7 +101,7 @@ const EditModal = ({
                 <MessageMock
                   browserView
                   index={entity.id}
-                  message={new Message({ ...entity, content: updateText })}
+                  message={{ ...entity, content: updateText }}
                 />
               </Box>
             </Stack>

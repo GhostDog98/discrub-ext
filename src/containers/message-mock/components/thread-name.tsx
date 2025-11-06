@@ -1,5 +1,5 @@
 import { Typography, useTheme } from "@mui/material";
-import Channel from "../../../classes/channel";
+import type { Channel } from "discrub-lib/types/discord-types";
 
 type ThreadNameProps = { thread: Channel };
 

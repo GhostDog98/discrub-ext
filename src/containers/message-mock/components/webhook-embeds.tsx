@@ -1,6 +1,6 @@
 import { Stack } from "@mui/material";
 import WebhookEmbedMock from "../../../components/webhook-embed-mock";
-import Message from "../../../classes/message";
+import type { Message } from "discrub-lib/types/discord-types";
 import { getRichEmbeds } from "../../../utils";
 
 type WebhookEmbedsProps = {

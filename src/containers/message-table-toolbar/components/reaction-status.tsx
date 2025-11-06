@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
-
+import type { ExportUserMap } from "discrub-lib/types/discrub-types";
 import {
   getEncodedEmoji,
   resolveAvatarUrl,
@@ -9,7 +9,6 @@ import {
 import { ImgAdornment } from "discrub-lib/common";
 import { Emoji } from "../../../classes/emoji.ts";
 import { AppTaskEntity } from "../../../features/app/app-types.ts";
-import { ExportUserMap } from "../../../features/export/export-types.ts";
 
 type ReactionStatusProps = {
   emojisInUse: Emoji[];

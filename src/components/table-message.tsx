@@ -4,11 +4,11 @@ import { Tooltip } from "discrub-lib/common";
 import AttachmentIcon from "@mui/icons-material/Attachment";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import MessageMock from "../containers/message-mock/message-mock";
-import Message from "../classes/message";
+import type { Message } from "discrub-lib/types/discord-types";
+import type { AppSettings } from "discrub-lib/types/discrub-types";
 import { EmbedType } from "../enum/embed-type";
 import { TableCell } from "@mui/material";
 import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
-import { AppSettings } from "../features/app/app-types";
 import { stringToBool } from "../utils";
 
 type TableMessageProps = {

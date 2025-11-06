@@ -1,7 +1,5 @@
 import Attachment from "../classes/attachment";
-import Guild from "../classes/guild";
-import Message from "../classes/message";
-import Role from "../classes/role";
+import type { Guild, Message, Role } from "discrub-lib/types/discord-types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isMessage = (entity: any): entity is Message => {

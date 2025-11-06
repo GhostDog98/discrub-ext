@@ -1,23 +1,26 @@
 import { isAttachment, isGuild, isNonNullable, isRole } from "./app/guards";
 import Attachment from "./classes/attachment";
-import Channel from "./classes/channel";
-import Embed from "./classes/embed";
-import { Emoji } from "./classes/emoji";
-import Guild from "./classes/guild";
-import Message from "./classes/message";
-import Role from "./classes/role";
-import { ChannelType } from "./enum/channel-type";
-import { EmbedType } from "./enum/embed-type";
-import {
+import type {
+  Channel,
+  Embed,
+  Guild,
+  Message,
+  Role,
+  GuildMemberObject,
+} from "discrub-lib/types/discord-types";
+import type {
   ExportAvatarMap,
   ExportEmojiMap,
   ExportReaction,
   ExportRoleMap,
   ExportUserMap,
-} from "./features/export/export-types";
+  SearchCriteria,
+} from "discrub-lib/types/discrub-types";
+import { Emoji } from "./classes/emoji";
+import { ChannelType } from "./enum/channel-type";
+import { EmbedType } from "./enum/embed-type";
 import { ReactingUser } from "./components/reaction-list-item-button";
 import { MessageType } from "./enum/message-type";
-import { SearchCriteria } from "./features/message/message-types.ts";
 import {
   addDays,
   addSeconds,
@@ -31,7 +34,6 @@ import { IsPinnedType } from "./enum/is-pinned-type.ts";
 import { SortDirection } from "./enum/sort-direction.ts";
 import { START_OFFSET } from "./features/message/contants.ts";
 import { User } from "./classes/user.ts";
-import { GuildMemberObject } from "./types/guild-member-object.ts";
 import filenamify from "filenamify";
 import { nanoid } from "nanoid";
 
@@ -156,7 +158,7 @@ export const formatUserData = ({
 };
 
 export const getRichEmbeds = (message: Message): Embed[] => {
-  return message.embeds.filter((embed) => embed.type === EmbedType.RICH);
+  return message.embeds.filter((embed: Embed) => embed.type === EmbedType.RICH);
 };
 
 export const getExportFileName = (
@@ -353,14 +355,15 @@ export const getRoleNames = (
  */
 const _orderRoles = (roles: Role[] = []): Role[] => {
   return roles
-    .map((role) => new Role({ ...role }))
+    .map((role) => ({ ...role }))
     .sort((a, b) => sortByProperty(a, b, "position", "desc"));
 };
 
 const _getApplicableRoles = (roleIds: string[] = [], guild: Guild): Role[] => {
   return (
     guild.roles?.filter(
-      (role) => roleIds.some((id) => id === role.id) && Boolean(role.position),
+      (role: Role) =>
+        roleIds.some((id) => id === role.id) && Boolean(role.position),
     ) || []
   );
 };
@@ -570,7 +573,7 @@ export const isUserDataStale = (
  */
 export const getSortedChannels = (channels: Channel[]) => {
   return channels
-    .map((c) => new Channel({ ...c }))
+    .map((c) => ({ ...c }))
     .sort((a, b) =>
       sortByProperty(
         { name: String(a.name).toLowerCase() },
@@ -586,7 +589,7 @@ export const getSortedChannels = (channels: Channel[]) => {
  */
 export const getSortedGuilds = (guilds: Guild[]) => {
   return guilds
-    .map((g) => new Guild({ ...g }))
+    .map((g) => ({ ...g }))
     .sort((a, b) =>
       sortByProperty(
         { name: a.name.toLowerCase() },
@@ -606,7 +609,7 @@ export const getSortedMessages = (
   sortDirection: SortDirection = SortDirection.DESCENDING,
 ) => {
   return messages
-    .map((m) => new Message({ ...m }))
+    .map((m) => ({ ...m }))
     .sort((a, b) =>
       sortByProperty(
         Object.assign(a, { date: new Date(a.timestamp) }),

@@ -5,9 +5,9 @@ import {
   Typography,
 } from "@mui/material";
 import ExportProgress from "./export-progress.tsx";
-import Channel from "../../../classes/channel";
+import type { Channel } from "discrub-lib/types/discord-types";
+import type { AppSettings } from "discrub-lib/types/discrub-types";
 import Config from "../../discrub-dialog/components/config";
-import { AppSettings } from "../../../features/app/app-types";
 import { DiscrubSetting } from "../../../enum/discrub-setting";
 import EnhancedTabs, {
   EnhancedTab,

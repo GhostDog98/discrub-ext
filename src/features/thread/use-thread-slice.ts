@@ -8,8 +8,7 @@ import {
   getThreadsFromMessages as getThreadsFromMessagesAction,
 } from "./thread-slice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import Channel from "../../classes/channel";
-import Message from "../../classes/message";
+import type { Channel, Message } from "discrub-lib/types/discord-types";
 
 const useThreadSlice = () => {
   const dispatch = useAppDispatch();

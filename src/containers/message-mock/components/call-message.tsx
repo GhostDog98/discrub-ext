@@ -1,6 +1,6 @@
 import { Stack, Typography, useTheme } from "@mui/material";
 import { User } from "../../../classes/user";
-import { MessageCallObject } from "../../../types/message-call-object";
+import { MessageCallObject } from "discrub-lib/types/discord-types";
 import AuthorName, { AuthorNameProps } from "./author-name";
 import { formatDuration, intervalToDuration, parseISO } from "date-fns";
 import PhoneIcon from "@mui/icons-material/Phone";
@@ -26,7 +26,7 @@ const CallMessage = ({
   const { timestamp } = msg;
   const { participants, ended_timestamp } = call || { participants: [] };
   const { id } = currentUser || { id: null };
-  const answered = participants.some((pId) => pId === id);
+  const answered = participants.some((pId: string) => pId === id);
   let duration = null;
   if (timestamp && ended_timestamp) {
     const rawDuration = intervalToDuration({

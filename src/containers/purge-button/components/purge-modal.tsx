@@ -9,7 +9,7 @@ import SearchCriteria, {
   SearchCriteriaComponentType,
 } from "../../search-criteria/search-criteria.tsx";
 import PurgeContent from "./purge-content.tsx";
-import Message from "../../../classes/message.ts";
+import type { Message } from "discrub-lib/types/discord-types";
 import { isMessage } from "../../../app/guards.ts";
 import PurgeStatusHeader from "./purge-status-header.tsx";
 import { useMessageSlice } from "../../../features/message/use-message-slice.ts";

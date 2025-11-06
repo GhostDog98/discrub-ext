@@ -6,10 +6,8 @@ import {
   getRoleNames,
 } from "../../../utils";
 import CheckIcon from "@mui/icons-material/Check";
-import Message from "../../../classes/message";
-import Role from "../../../classes/role";
-import { ExportUserMap } from "../../../features/export/export-types";
-import Guild from "../../../classes/guild";
+import type { Message, Role, Guild } from "discrub-lib/types/discord-types";
+import type { ExportUserMap } from "discrub-lib/types/discrub-types";
 
 export type AuthorNameProps = {
   msg: Message;

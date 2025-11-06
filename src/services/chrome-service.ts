@@ -1,9 +1,9 @@
 /*global chrome*/
 
+import type { AppSettings } from "discrub-lib/types/discrub-types";
 import { DiscrubSetting } from "../enum/discrub-setting";
 import { ResolutionType } from "../enum/resolution-type";
 import { SortDirection } from "../enum/sort-direction";
-import { AppSettings } from "../features/app/app-types";
 import { UserDataRefreshRate } from "../enum/user-data-refresh-rate.ts";
 import { DelayModifier } from "../enum/delay-modifier.ts";
 import { Delay } from "../enum/delay.ts";

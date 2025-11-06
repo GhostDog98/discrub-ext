@@ -1,5 +1,4 @@
-import Channel from "../../classes/channel";
-import Message from "../../classes/message";
+import type { Channel, Message } from "discrub-lib/types/discord-types";
 
 export type ThreadState = {
   threads: Channel[];

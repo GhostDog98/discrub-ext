@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Alert, Box, Snackbar } from "@mui/material";
 import copy from "copy-to-clipboard";
-import Message from "../classes/message";
+import type { Message } from "discrub-lib/types/discord-types";
 import { useGuildSlice } from "../features/guild/use-guild-slice";
 import { useExportSlice } from "../features/export/use-export-slice";
 import { resolveAvatarUrl } from "../utils";

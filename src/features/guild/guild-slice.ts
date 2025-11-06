@@ -5,14 +5,23 @@ import {
   resetFilters,
   resetMessageData,
 } from "../message/message-slice";
-import Role from "../../classes/role";
-import Guild from "../../classes/guild";
+import type { Guild } from "discrub-lib/types/discord-types";
 import { sortByProperty } from "../../utils";
 import { GuildState } from "./guild-types";
 import { PreFilterUser } from "../dm/dm-types";
 import { AppThunk } from "../../app/store";
 import { DiscordService } from "discrub-lib/services";
 import { resetPurgeRemovalFrom } from "../app/app-slice.ts";
+
+/**
+ * Normalizes a partial Guild object to ensure all required properties exist.
+ * This ensures the object will pass the isGuild type guard.
+ */
+const normalizeGuild = (partial: Partial<Guild>): Guild => ({
+  ...partial,
+  emojis: partial.emojis ?? [],
+  roles: partial.roles ?? []
+} as Guild);
 
 const initialState: GuildState = {
   guilds: [],
@@ -69,9 +78,7 @@ export const getRoles =
       if (success && data) {
         const updatedGuilds = guilds.map((g) => {
           if (g.id === guildId) {
-            return Object.assign(g, {
-              roles: data.map((role) => new Role(role)),
-            });
+            return { ...g, roles: data };
           } else {
             return g;
           }
@@ -90,7 +97,7 @@ export const getGuilds = (): AppThunk => async (dispatch, getState) => {
       token,
     );
     if (success && data) {
-      dispatch(setGuilds(data.map((guild) => new Guild(guild))));
+      dispatch(setGuilds(data.map(normalizeGuild)));
     } else {
       dispatch(setGuilds([]));
     }

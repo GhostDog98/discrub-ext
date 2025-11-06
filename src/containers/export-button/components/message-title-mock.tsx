@@ -1,6 +1,5 @@
 import { Button, Stack, Theme, Typography, useTheme } from "@mui/material";
-import Guild from "../../../classes/guild";
-import Channel from "../../../classes/channel";
+import type { Guild, Channel } from "discrub-lib/types/discord-types";
 import { isGuild } from "../../../app/guards";
 import { isDm } from "../../../utils";
 import { transparancy } from "../../../theme.ts";

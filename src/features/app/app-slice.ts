@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { wait } from "../../utils";
+import type { AppSettings } from "discrub-lib/types/discrub-types";
 import {
   AppTask,
   AppState,
   Timeout,
-  AppSettings,
   AppTaskEntity,
 } from "./app-types";
 import { AppThunk } from "../../app/store";

@@ -4,14 +4,13 @@ import {
   getReactingUsers,
   isNonStandardMessage,
 } from "../../../utils";
-import Message from "../../../classes/message";
-import ServerEmoji from "../../../components/server-emoji";
-import {
+import type { Message, Guild } from "discrub-lib/types/discord-types";
+import type {
   ExportReaction,
   ExportReactionMap,
   ExportUserMap,
-} from "../../../features/export/export-types";
-import Guild from "../../../classes/guild";
+} from "discrub-lib/types/discrub-types";
+import ServerEmoji from "../../../components/server-emoji";
 
 type ReactionsProps = {
   message: Message;

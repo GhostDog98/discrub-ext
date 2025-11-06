@@ -14,7 +14,7 @@ import { useThreadSlice } from "../../features/thread/use-thread-slice";
 import { useMessageSlice } from "../../features/message/use-message-slice";
 import { useExportSlice } from "../../features/export/use-export-slice";
 import { useUserSlice } from "../../features/user/use-user-slice";
-import Message from "../../classes/message";
+import type { Message } from "discrub-lib/types/discord-types";
 import AuthorAvatar from "../../components/author-avatar";
 import { MessageType } from "../../enum/message-type";
 import { useAppSlice } from "../../features/app/use-app-slice";

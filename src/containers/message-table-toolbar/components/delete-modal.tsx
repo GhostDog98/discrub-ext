@@ -26,11 +26,11 @@ import { DeleteConfiguration } from "../../../features/message/message-types";
 import { AppTask } from "../../../features/app/app-types";
 import MessageMock from "../../message-mock/message-mock";
 import { EnhancedAutocomplete } from "discrub-lib/common";
-import {
+import type {
   ExportReactionMap,
   ExportUserMap,
-} from "../../../features/export/export-types.ts";
-import Message from "../../../classes/message.ts";
+} from "discrub-lib/types/discrub-types";
+import type { Message } from "discrub-lib/types/discord-types";
 import { Emoji } from "../../../classes/emoji.ts";
 import {
   getEncodedEmoji,

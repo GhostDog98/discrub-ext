@@ -1,4 +1,4 @@
-import Guild from "../../classes/guild";
+import type { Guild } from "discrub-lib/types/discord-types";
 import { PreFilterUser } from "../dm/dm-types";
 
 export type GuildState = {

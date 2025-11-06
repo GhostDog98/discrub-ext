@@ -10,8 +10,9 @@ import {
   setTimeoutMessage as setTimeoutMessageAction,
   setSettings as setSettingsAction,
 } from "./app-slice";
-import { AppSettings, AppTask } from "./app-types";
-import Message from "../../classes/message";
+import type { AppSettings } from "discrub-lib/types/discrub-types";
+import { AppTask } from "./app-types";
+import type { Message } from "discrub-lib/types/discord-types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
 const useAppSlice = () => {

@@ -15,7 +15,13 @@ import {
   messageTypeEquals,
   stringToBool,
 } from "../../utils";
-import Message from "../../classes/message";
+import type { Message, Channel, Reaction } from "discrub-lib/types/discord-types";
+import type {
+  SearchCriteria,
+  ExportReaction,
+  ExportReactionMap,
+  ExportUserMap,
+} from "discrub-lib/types/discrub-types";
 import { MessageType } from "../../enum/message-type";
 import {
   getArchivedThreads,
@@ -48,7 +54,6 @@ import {
   MessageData,
   MessageSearchOptions,
   MessageState,
-  SearchCriteria,
   SearchResultData,
 } from "./message-types";
 import { SortDirection } from "../../enum/sort-direction";
@@ -57,14 +62,7 @@ import { FilterName } from "../../enum/filter-name";
 import Attachment from "../../classes/attachment";
 import { AppThunk } from "../../app/store";
 import { isMessage } from "../../app/guards";
-import {
-  ExportReaction,
-  ExportReactionMap,
-  ExportUserMap,
-} from "../export/export-types";
-import Channel from "../../classes/channel";
 import { QueryStringParam } from "../../enum/query-string-param";
-import { Reaction } from "../../classes/reaction";
 import { ReactionType } from "../../enum/reaction-type";
 import { MessageCategory } from "../../enum/message-category";
 import { DiscordService } from "discrub-lib/services";
@@ -634,11 +632,14 @@ export const deleteAttachment =
 
       dispatch(setIsModifying(true));
       if (shouldEdit) {
-        const updatedMessage = Object.assign(new Message({ ...message }), {
-          attachments: message.attachments.filter(
-            (attch) => attch.id !== attachment.id,
-          ),
-        });
+        const updatedMessage = Object.assign(
+          { ...message },
+          {
+            attachments: message.attachments.filter(
+              (attch) => attch.id !== attachment.id,
+            ),
+          },
+        );
         const success = await dispatch(updateMessage(updatedMessage));
         if (!success) {
           await dispatch(
@@ -707,7 +708,7 @@ export const updateMessage =
 
       if (success && data) {
         const { messages, filteredMessages } = getState().message;
-        const updatedMessage = new Message(data);
+        const updatedMessage = data;
         const updatedMessages = messages.map((message) =>
           message.id === updatedMessage.id ? updatedMessage : message,
         );
@@ -759,9 +760,12 @@ export const editMessages =
         if (!getState().app.discrubCancelled) {
           success = await dispatch(
             updateMessage(
-              Object.assign(new Message({ ...message }), {
-                content: updateText,
-              }),
+              Object.assign(
+                { ...message },
+                {
+                  content: updateText,
+                },
+              ),
             ),
           );
         }
@@ -863,10 +867,13 @@ export const deleteMessages =
 
       dispatch(
         setModifyEntity(
-          Object.assign(new Message({ ...currentRow }), {
-            _index: count + 1,
-            _total: messages.length,
-          }),
+          Object.assign(
+            { ...currentRow },
+            {
+              _index: count + 1,
+              _total: messages.length,
+            },
+          ),
         ),
       );
       const isMissingPermission = noPermissionThreadIds.some(
@@ -893,9 +900,7 @@ export const deleteMessages =
 
         if (shouldDelete) {
           if (await dispatch(isAppStopped())) break;
-          const success = await dispatch(
-            deleteMessage(new Message({ ...currentRow })),
-          );
+          const success = await dispatch(deleteMessage({ ...currentRow }));
 
           if (!success) {
             await dispatch(
@@ -910,7 +915,7 @@ export const deleteMessages =
           const success = await dispatch(
             updateMessage(
               Object.assign(
-                new Message({ ...currentRow }),
+                { ...currentRow },
                 deleteConfig.attachments
                   ? { attachments: [] }
                   : { content: "" },

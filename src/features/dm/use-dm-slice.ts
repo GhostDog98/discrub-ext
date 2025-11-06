@@ -8,7 +8,7 @@ import {
 } from "./dm-slice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { PreFilterUser } from "./dm-types";
-import Channel from "../../classes/channel";
+import type { Channel } from "discrub-lib/types/discord-types";
 
 const useDmSlice = () => {
   const dispatch = useAppDispatch();

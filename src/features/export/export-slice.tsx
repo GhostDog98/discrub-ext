@@ -32,21 +32,23 @@ import {
 } from "../app/app-slice";
 import { renderToString } from "react-dom/server";
 import { MessageRegex } from "../../enum/message-regex";
+import type {
+  ExportAvatarMap,
+  ExportEmojiMap,
+  ExportMediaMap,
+  ExportReactionMap,
+  ExportRoleMap,
+  ExportUserMap,
+} from "discrub-lib/types/discrub-types";
 import {
   AvatarFromMessageProps,
   CompressMessagesProps,
   EmojisFromMessageProps,
-  ExportAvatarMap,
   ExportData,
-  ExportEmojiMap,
   ExportHtmlProps,
   ExportJsonProps,
   ExportMap,
-  ExportMediaMap,
-  ExportReactionMap,
-  ExportRoleMap,
   ExportState,
-  ExportUserMap,
   FilesFromMessagesProps,
   FormattedInnerHtmlProps,
   GetEmojiProps,
@@ -54,14 +56,12 @@ import {
   SpecialFormatting,
 } from "./export-types";
 import { ExportType } from "../../enum/export-type";
-import Message from "../../classes/message";
+import type { Message, Guild, Channel } from "discrub-lib/types/discord-types";
 import ExportUtils from "./export-utils";
 import { AppThunk } from "../../app/store";
 import { ReactElement } from "react";
-import Guild from "../../classes/guild";
 import Papa from "papaparse";
 import { flatten } from "flat";
-import Channel from "../../classes/channel";
 import { DiscordService } from "discrub-lib/services";
 import { MediaType } from "../../enum/media-type";
 import { isAttachment } from "../../app/guards.ts";
@@ -883,7 +883,7 @@ const _exportJson =
                   );
                 });
               }
-              return Object.assign(new Message({ ...message }), { content });
+              return Object.assign({ ...message }, { content });
             }),
           ),
         ],
@@ -1123,7 +1123,7 @@ export const exportChannels =
 
       if (messageData) {
         exportMessages = messageData.messages
-          .map((m) => new Message({ ...m }))
+          .map((m) => ({ ...m }))
           .sort((a, b) =>
             sortByProperty(
               Object.assign(a, { date: new Date(a.timestamp) }),

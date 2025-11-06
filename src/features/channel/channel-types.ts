@@ -1,4 +1,4 @@
-import Channel from "../../classes/channel";
+import type { Channel } from "discrub-lib/types/discord-types";
 
 export type ChannelState = {
   channels: Channel[];

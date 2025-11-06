@@ -1,6 +1,5 @@
 import { getIconUrl } from "../utils";
-import Guild from "../classes/guild";
-import Channel from "../classes/channel";
+import type { Guild, Channel } from "discrub-lib/types/discord-types";
 
 type EntityIconProps = {
   entity: Guild | Channel;

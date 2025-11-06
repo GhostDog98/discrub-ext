@@ -1,6 +1,6 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import { format, parseISO } from "date-fns";
-import Message from "../../../classes/message";
+import type { Message } from "discrub-lib/types/discord-types";
 
 type ChainedDateProps = {
   message: Message;

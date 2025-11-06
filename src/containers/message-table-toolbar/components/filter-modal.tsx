@@ -7,7 +7,7 @@ import {
   DialogContent,
 } from "@mui/material";
 import FilterComponent from "./filter-component";
-import Channel from "../../../classes/channel";
+import type { Channel } from "discrub-lib/types/discord-types";
 import { Filter } from "../../../features/message/message-types";
 
 type FilterModalProps = {

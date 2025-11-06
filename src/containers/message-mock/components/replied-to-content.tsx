@@ -1,10 +1,9 @@
 import { Stack, Typography } from "@mui/material";
+import type { Message, Guild } from "discrub-lib/types/discord-types";
+import type { ExportUserMap } from "discrub-lib/types/discrub-types";
 import AuthorAvatar from "../../../components/author-avatar";
 import AuthorName from "./author-name";
 import MessageContent from "./message-content";
-import Message from "../../../classes/message";
-import { ExportUserMap } from "../../../features/export/export-types";
-import Guild from "../../../classes/guild";
 import { ResolvedFilePathObject } from "../../../utils";
 
 type RepliedToContentProps = {

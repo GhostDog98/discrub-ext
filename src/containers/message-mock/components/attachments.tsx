@@ -1,7 +1,7 @@
 import { Stack } from "@mui/material";
 import AttachmentMock from "../../../components/attachment-mock";
 import EmbedMock from "../../../components/embed-mock";
-import Message from "../../../classes/message";
+import type { Message } from "discrub-lib/types/discord-types";
 
 type AttachmentsProps = { message: Message };
 

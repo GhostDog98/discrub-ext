@@ -6,7 +6,7 @@ import PurgeMessageStatus, {
 } from "./purge-message-status.tsx";
 import { AppTaskStatus } from "../../../features/app/app-types.ts";
 import { PurgeStatus } from "../../../features/purge/purge-types.ts";
-import Message from "../../../classes/message.ts";
+import type { Message } from "discrub-lib/types/discord-types";
 
 type PurgeMessageProps = {
   style: React.CSSProperties;

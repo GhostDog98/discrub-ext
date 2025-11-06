@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Stack, useTheme, List, Box, Skeleton, Palette } from "@mui/material";
+import type { AppSettings } from "discrub-lib/types/discrub-types";
 import DonationListButton from "./donation-list-button";
 import DonationHeaderButton from "./donation-header-button.tsx";
 import { useDonations } from "../../../hooks/donations.ts";
 import DonationFooterControls from "./donation-footer-controls.tsx";
-import { AppSettings } from "../../../features/app/app-types.ts";
 import { setSetting } from "../../../services/chrome-service.ts";
 import { DiscrubSetting } from "../../../enum/discrub-setting.ts";
 import { boolToString } from "../../../utils.ts";

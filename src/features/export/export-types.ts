@@ -1,6 +1,12 @@
-import Channel from "../../classes/channel";
-import Guild from "../../classes/guild";
-import Message from "../../classes/message";
+import type { Channel, Guild, Message } from "discrub-lib/types/discord-types";
+import type {
+  ExportReactionMap,
+  ExportUserMap,
+  ExportEmojiMap,
+  ExportAvatarMap,
+  ExportMediaMap,
+  ExportRoleMap,
+} from "discrub-lib/types/discrub-types";
 import { ExportType } from "../../enum/export-type";
 import ExportUtils from "./export-utils";
 
@@ -28,69 +34,6 @@ export type ExportMap = {
   /** Cleared when messages are reset **/
   reactionMap: ExportReactionMap;
   /*************************************/
-};
-
-export type ExportReaction = {
-  id: Snowflake;
-  burst: boolean;
-};
-
-/**
- * This is a 'Message Id & emoji -> Export Reaction List' map.
- */
-export type ExportReactionMap = {
-  [id: Snowflake]: {
-    [emoji: string]: ExportReaction[];
-  };
-};
-
-/**
- * This is a 'User Id -> User Information' map.
- */
-export type ExportUserMap = {
-  [id: Snowflake]: {
-    userName: string | Maybe;
-    displayName: string | Maybe;
-    avatar: string | Maybe;
-    guilds: {
-      [guildId: Snowflake]: {
-        roles: Snowflake[];
-        nick: string | Maybe;
-        joinedAt: string | Maybe;
-        timestamp: number;
-      };
-    };
-    timestamp: number;
-  };
-};
-
-/**
- * This is an 'Emoji Id -> Local File Path' map.
- */
-export type ExportEmojiMap = {
-  [id: Snowflake]: string;
-};
-
-/**
- * This is an 'User Id and Avatar -> Local File Path' map.
- * @example idAndAvatar = "1234567/s3oma03mdsm" where "1234567" is a User Id and "s3oma03mdsm" is an Avatar
- */
-export type ExportAvatarMap = {
-  [idAndAvatar: string]: string;
-};
-
-/**
- * This is a 'Remote URL -> Local File Path' map.
- */
-export type ExportMediaMap = {
-  [remoteUrl: string]: string;
-};
-
-/**
- * This is a 'Remote URL -> Local File Path' map.
- */
-export type ExportRoleMap = {
-  [remoteUrl: string]: string;
 };
 
 export type SpecialFormatting = {

@@ -1,4 +1,4 @@
-import Embed from "../classes/embed";
+import type { Embed } from "discrub-lib/types/discord-types";
 import { useExportSlice } from "../features/export/use-export-slice";
 import { EmbedType } from "../enum/embed-type";
 import { useAppSlice } from "../features/app/use-app-slice";

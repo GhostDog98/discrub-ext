@@ -31,7 +31,7 @@ import { useGuildSlice } from "../../features/guild/use-guild-slice";
 import { useChannelSlice } from "../../features/channel/use-channel-slice";
 import { useMessageSlice } from "../../features/message/use-message-slice";
 import { useAppSlice } from "../../features/app/use-app-slice";
-import Message from "../../classes/message";
+import type { Message } from "discrub-lib/types/discord-types";
 import { SortDirection } from "discrub-lib/common-enum";
 import TableMessage from "../../components/table-message";
 import AttachmentModal from "../../components/attachment-modal";

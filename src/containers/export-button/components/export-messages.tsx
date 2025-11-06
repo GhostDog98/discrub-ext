@@ -1,8 +1,6 @@
 import { Box, Stack } from "@mui/material";
 import { differenceInSeconds, parseISO } from "date-fns";
-import Channel from "../../../classes/channel";
-import Message from "../../../classes/message";
-import Guild from "../../../classes/guild";
+import type { Channel, Message, Guild } from "discrub-lib/types/discord-types";
 import MessageTitleMock from "./message-title-mock";
 import MessageMock from "../../message-mock/message-mock";
 import { MessageType } from "../../../enum/message-type";

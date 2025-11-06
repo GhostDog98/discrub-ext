@@ -20,22 +20,22 @@ import {
   setCurrentExportEntity as setCurrentExportEntityAction,
 } from "./export-slice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import {
+import type {
   ExportAvatarMap,
-  ExportData,
   ExportEmojiMap,
   ExportMediaMap,
   ExportReactionMap,
   ExportRoleMap,
   ExportUserMap,
+} from "discrub-lib/types/discrub-types";
+import {
+  ExportData,
   FormattedInnerHtmlProps,
   SpecialFormatting,
 } from "./export-types";
-import Channel from "../../classes/channel";
+import type { Channel, Message, Guild } from "discrub-lib/types/discord-types";
 import ExportUtils from "./export-utils";
 import { ExportType } from "../../enum/export-type";
-import Message from "../../classes/message";
-import Guild from "../../classes/guild";
 
 const useExportSlice = () => {
   const dispatch = useAppDispatch();

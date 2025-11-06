@@ -14,6 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
+import type { ExportUserMap } from "discrub-lib/types/discrub-types";
 import {
   getOsSafeString,
   messageTypeEquals,
@@ -33,10 +34,7 @@ import { useMessageSlice } from "../../features/message/use-message-slice";
 import { useAppSlice } from "../../features/app/use-app-slice";
 import { useUserSlice } from "../../features/user/use-user-slice";
 import { useExportSlice } from "../../features/export/use-export-slice";
-import { ExportUserMap } from "../../features/export/export-types";
 import { MessageType } from "../../enum/message-type";
-import Channel from "../../classes/channel";
-import Guild from "../../classes/guild";
 import EntityIcon from "../../components/entity-icon";
 
 function Tags() {
@@ -88,7 +86,7 @@ function Tags() {
     discrubCancelled;
 
   const sortedGuilds = guilds
-    .map((g) => new Guild({ ...g }))
+    .map((g) => ({ ...g }))
     .sort((a, b) =>
       sortByProperty(
         { name: a.name.toLowerCase() },
@@ -97,7 +95,7 @@ function Tags() {
       ),
     );
   const sortedChannels = channels
-    .map((c) => new Channel({ ...c }))
+    .map((c) => ({ ...c }))
     .sort((a, b) =>
       sortByProperty(
         { name: String(a.name).toLowerCase() },
