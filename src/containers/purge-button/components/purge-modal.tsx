@@ -14,7 +14,7 @@ import { isMessage } from "discrub-lib/discrub-guards";
 import PurgeStatusHeader from "./purge-status-header.tsx";
 import { useMessageSlice } from "../../../features/message/use-message-slice.ts";
 import Config from "../../discrub-dialog/components/config.tsx";
-import { DiscrubSetting } from "../../../enum/discrub-setting.ts";
+import { DiscrubSetting } from "discrub-lib/discrub-enum";
 import EnhancedDialogTitle from "../../../common-components/enhanced-dialog/enhanced-dialog-title.tsx";
 
 type PurgeModalProps = {

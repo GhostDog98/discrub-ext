@@ -8,7 +8,7 @@ import ExportProgress from "./export-progress.tsx";
 import type { Channel } from "discrub-lib/types/discord-types";
 import type { AppSettings } from "discrub-lib/types/discrub-types";
 import Config from "../../discrub-dialog/components/config";
-import { DiscrubSetting } from "../../../enum/discrub-setting";
+import { DiscrubSetting } from "discrub-lib/discrub-enum";
 import EnhancedTabs, {
   EnhancedTab,
 } from "../../../common-components/enhanced-tabs/enhanced-tabs.tsx";
@@ -23,7 +23,7 @@ import {
   getIconUrl,
   getSortedChannels,
 } from "../../../utils.ts";
-import { EntityHint } from "../../../enum/entity-hint.ts";
+import { EntityHint } from "discrub-lib/discrub-enum";
 
 type BulkContentProps = {
   isDm?: boolean;

@@ -26,7 +26,7 @@ import {
   Filter,
   MessageSearchOptions,
 } from "./message-types";
-import { SortDirection } from "../../enum/sort-direction";
+import { SortDirection } from "discrub-lib/common-enum";
 import type { Attachment, Message } from "discrub-lib/types/discord-types";
 
 const useMessageSlice = () => {

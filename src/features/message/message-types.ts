@@ -1,8 +1,7 @@
 import type { Channel, Message } from "discrub-lib/types/discord-types";
 import type { SearchCriteria } from "discrub-lib/types/discrub-types";
-import { FilterName } from "../../enum/filter-name";
-import { FilterType } from "../../enum/filter-type";
-import { SortDirection } from "../../enum/sort-direction";
+import { FilterName, FilterType } from "discrub-lib/discrub-enum";
+import { SortDirection } from "discrub-lib/common-enum";
 
 export type MessageState = {
   messages: Message[]; // Message objects

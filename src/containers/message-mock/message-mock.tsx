@@ -16,7 +16,7 @@ import { useExportSlice } from "../../features/export/use-export-slice";
 import { useUserSlice } from "../../features/user/use-user-slice";
 import type { Message } from "discrub-lib/types/discord-types";
 import AuthorAvatar from "../../components/author-avatar";
-import { MessageType } from "../../enum/message-type";
+import { MessageType } from "discrub-lib/discord-enum";
 import { useAppSlice } from "../../features/app/use-app-slice";
 import AuthorName from "./components/author-name";
 import MessageContent from "./components/message-content";

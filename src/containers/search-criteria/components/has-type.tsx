@@ -1,6 +1,6 @@
 import { EnhancedAutocomplete, Tooltip } from "discrub-lib/common";
 import { useMessageSlice } from "../../../features/message/use-message-slice";
-import { HasType as HasTypeEnum } from "../../../enum/has-type";
+import { HasType as HasTypeEnum } from "discrub-lib/discord-enum";
 
 type HasTypeProps = {
   disabled: boolean;

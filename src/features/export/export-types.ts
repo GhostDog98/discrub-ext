@@ -7,7 +7,7 @@ import type {
   ExportMediaMap,
   ExportRoleMap,
 } from "discrub-lib/types/discrub-types";
-import { ExportType } from "../../enum/export-type";
+import { ExportType } from "discrub-lib/discrub-enum";
 import ExportUtils from "./export-utils";
 
 export type ExportState = {

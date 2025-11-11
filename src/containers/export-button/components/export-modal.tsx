@@ -1,5 +1,5 @@
 import { Dialog } from "@mui/material";
-import { ExportType } from "../../../enum/export-type";
+import { ExportType } from "discrub-lib/discrub-enum";
 import ExportModalActions from "./export-modal-actions";
 import React from "react";
 import EnhancedDialogTitle from "../../../common-components/enhanced-dialog/enhanced-dialog-title.tsx";

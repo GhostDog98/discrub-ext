@@ -25,7 +25,8 @@ import PauseButton from "../../components/pause-button";
 import CancelButton from "../../components/cancel-button";
 import TokenNotFound from "../../components/token-not-found";
 import Papa from "papaparse";
-import { Tag, getTagName } from "../../enum/tag";
+import { Tag } from "discrub-lib/discrub-enum";
+import { getTagName } from "discrub-lib/discrub-utils";
 import { format } from "date-fns";
 import SkipReplies from "./components/skip-replies";
 import { useGuildSlice } from "../../features/guild/use-guild-slice";
@@ -34,7 +35,7 @@ import { useMessageSlice } from "../../features/message/use-message-slice";
 import { useAppSlice } from "../../features/app/use-app-slice";
 import { useUserSlice } from "../../features/user/use-user-slice";
 import { useExportSlice } from "../../features/export/use-export-slice";
-import { MessageType } from "../../enum/message-type";
+import { MessageType } from "discrub-lib/discord-enum";
 import EntityIcon from "../../components/entity-icon";
 
 function Tags() {

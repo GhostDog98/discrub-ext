@@ -7,7 +7,7 @@ import {
   getEntityHint,
   getSortedChannels,
 } from "../../../utils.ts";
-import { EntityHint } from "../../../enum/entity-hint.ts";
+import { EntityHint } from "discrub-lib/discrub-enum";
 
 type SearchChannelsProps = {
   disabled?: boolean;

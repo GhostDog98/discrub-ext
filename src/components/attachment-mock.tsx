@@ -11,7 +11,7 @@ import {
   stringToTypedArray,
 } from "../utils";
 import { useAppSlice } from "../features/app/use-app-slice";
-import { MediaType } from "../enum/media-type";
+import { MediaType } from "discrub-lib/discrub-enum";
 import VideoMock from "./video-mock.tsx";
 import ImageMock from "./image-mock.tsx";
 

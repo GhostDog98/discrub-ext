@@ -42,7 +42,7 @@ import SearchCriteria, {
   SearchCriteriaComponentType,
 } from "../search-criteria/search-criteria.tsx";
 import { EnhancedAutocomplete } from "discrub-lib/common";
-import { EntityHint } from "../../enum/entity-hint.ts";
+import { EntityHint } from "discrub-lib/discrub-enum";
 import AppStatus from "../app-status/app-status.tsx";
 
 function ChannelMessages() {

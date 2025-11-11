@@ -1,23 +1,25 @@
 import { FormControl, Stack, SxProps, TextField, Theme } from "@mui/material";
 import { setSetting } from "../../../services/chrome-service";
-import { DiscrubSetting } from "../../../enum/discrub-setting";
 import { EnhancedAutocomplete, Tooltip } from "discrub-lib/common";
-import { SortDirection } from "../../../enum/sort-direction";
+import { SortDirection } from "discrub-lib/common-enum";
 import FormatListNumberedRtlIcon from "@mui/icons-material/FormatListNumberedRtl";
-import { ResolutionType } from "../../../enum/resolution-type";
-import { MediaType } from "../../../enum/media-type";
-import { UserDataRefreshRate } from "../../../enum/user-data-refresh-rate.ts";
 import { defaultSettings } from "../../../features/app/app-slice.ts";
 import { useDmSlice } from "../../../features/dm/use-dm-slice.ts";
 import { useGuildSlice } from "../../../features/guild/use-guild-slice.ts";
 import { useAppSlice } from "../../../features/app/use-app-slice.ts";
 import { useUserSlice } from "../../../features/user/use-user-slice.ts";
 import { filterBoth, getEntityHint } from "../../../utils.ts";
-import { EntityHint } from "../../../enum/entity-hint.ts";
-import { Delay } from "../../../enum/delay.ts";
-import { DelayModifier } from "../../../enum/delay-modifier.ts";
-import { DateFormat } from "../../../enum/date-format.ts";
-import { TimeFormat } from "../../../enum/time-format.ts";
+import {
+  DateFormat,
+  Delay,
+  DelayModifier,
+  DiscrubSetting,
+  EntityHint,
+  MediaType,
+  ResolutionType,
+  TimeFormat,
+  UserDataRefreshRate,
+} from "discrub-lib/discrub-enum";
 
 type ConfigProps = {
   visibleSettings: DiscrubSetting[];

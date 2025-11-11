@@ -6,7 +6,7 @@ import DonationHeaderButton from "./donation-header-button.tsx";
 import { useDonations } from "../../../hooks/donations.ts";
 import DonationFooterControls from "./donation-footer-controls.tsx";
 import { setSetting } from "../../../services/chrome-service.ts";
-import { DiscrubSetting } from "../../../enum/discrub-setting.ts";
+import { DiscrubSetting } from "discrub-lib/discrub-enum";
 import { boolToString } from "../../../utils.ts";
 
 type DonationComponentProps = {

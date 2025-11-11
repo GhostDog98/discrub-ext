@@ -8,16 +8,9 @@ import {
   AppTaskEntity,
 } from "./app-types";
 import { AppThunk } from "../../app/store";
-import { DiscrubSetting } from "../../enum/discrub-setting";
-import { SortDirection } from "../../enum/sort-direction";
-import { ResolutionType } from "../../enum/resolution-type";
-import { UserDataRefreshRate } from "../../enum/user-data-refresh-rate.ts";
+import { BrowserEnvironment, DateFormat, Delay, DelayModifier, DiscrubSetting, ResolutionType, TimeFormat, UserDataRefreshRate } from "discrub-lib/discrub-enum";
+import { SortDirection } from "discrub-lib/common-enum";
 import { setSetting } from "../../services/chrome-service.ts";
-import { DelayModifier } from "../../enum/delay-modifier.ts";
-import { Delay } from "../../enum/delay.ts";
-import { DateFormat } from "../../enum/date-format.ts";
-import { TimeFormat } from "../../enum/time-format.ts";
-import { BrowserEnvironment } from "../../enum/browser-environment.ts";
 
 export const defaultSettings: AppSettings = {
   // Extension Use Only

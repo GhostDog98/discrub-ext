@@ -3,7 +3,7 @@ import { differenceInSeconds, parseISO } from "date-fns";
 import type { Channel, Message, Guild } from "discrub-lib/types/discord-types";
 import MessageTitleMock from "./message-title-mock";
 import MessageMock from "../../message-mock/message-mock";
-import { MessageType } from "../../../enum/message-type";
+import { MessageType } from "discrub-lib/discord-enum";
 import { isNonStandardMessage, messageTypeEquals } from "../../../utils";
 import PageFooterControls from "./page-footer-controls";
 import { ExportData } from "../../../features/export/export-types.ts";

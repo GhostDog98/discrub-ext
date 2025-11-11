@@ -3,7 +3,7 @@ import { resetFilters, resetMessageData } from "../message/message-slice";
 import type { Channel } from "discrub-lib/types/discord-types";
 import { ChannelState } from "./channel-types";
 import { AppThunk } from "../../app/store";
-import { ChannelType } from "../../enum/channel-type";
+import { ChannelType } from "discrub-lib/discord-enum";
 import { DiscordService } from "discrub-lib/services";
 
 const initialState: ChannelState = {

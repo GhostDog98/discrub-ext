@@ -7,7 +7,7 @@ import { useChannelSlice } from "../../features/channel/use-channel-slice";
 import ExportUtils from "../../features/export/export-utils";
 import { useGuildSlice } from "../../features/guild/use-guild-slice";
 import { useDmSlice } from "../../features/dm/use-dm-slice";
-import { ExportType } from "../../enum/export-type";
+import { ExportType, MediaType } from "discrub-lib/discrub-enum";
 import type { Channel } from "discrub-lib/types/discord-types";
 import DefaultContent from "./components/default-content";
 import { useMessageSlice } from "../../features/message/use-message-slice";
@@ -18,7 +18,6 @@ import {
   stringToBool,
   stringToTypedArray,
 } from "../../utils";
-import { MediaType } from "../../enum/media-type";
 
 type ExportButtonProps = {
   bulk?: boolean;

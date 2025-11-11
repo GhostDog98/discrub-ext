@@ -15,11 +15,9 @@ import {
 } from "@mui/material";
 import { sortByProperty } from "../../../utils";
 import { Filter } from "../../../features/message/message-types";
-import { FilterName } from "../../../enum/filter-name";
-import { FilterType } from "../../../enum/filter-type";
 import type { Channel } from "discrub-lib/types/discord-types";
-import { MessageType } from "../../../enum/message-type";
-import { MessageCategory } from "../../../enum/message-category";
+import { MessageCategory, MessageType } from "discrub-lib/discord-enum";
+import { FilterName, FilterType } from "discrub-lib/discrub-enum";
 
 type FilterComponentProps = {
   isDm: boolean;

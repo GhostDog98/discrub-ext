@@ -1,6 +1,6 @@
 import MuiImg from "../common-components/mui-img/mui-img.tsx";
 import { SxProps } from "@mui/material";
-import { ResolutionType } from "../enum/resolution-type.ts";
+import { ResolutionType } from "discrub-lib/discrub-enum";
 
 type ImageMockProps = {
   url: string | undefined;

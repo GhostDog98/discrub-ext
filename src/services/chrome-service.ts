@@ -1,15 +1,8 @@
 /*global chrome*/
 
 import type { AppSettings } from "discrub-lib/types/discrub-types";
-import { DiscrubSetting } from "../enum/discrub-setting";
-import { ResolutionType } from "../enum/resolution-type";
-import { SortDirection } from "../enum/sort-direction";
-import { UserDataRefreshRate } from "../enum/user-data-refresh-rate.ts";
-import { DelayModifier } from "../enum/delay-modifier.ts";
-import { Delay } from "../enum/delay.ts";
-import { DateFormat } from "../enum/date-format.ts";
-import { TimeFormat } from "../enum/time-format.ts";
-import { BrowserEnvironment } from "../enum/browser-environment.ts";
+import { BrowserEnvironment, DateFormat, Delay, DelayModifier, DiscrubSetting, ResolutionType, TimeFormat, UserDataRefreshRate } from "discrub-lib/discrub-enum";
+import { SortDirection } from "discrub-lib/common-enum";
 
 type ChromeCallback = (param: string) => Promise<void> | void | null | undefined;
 

@@ -1,9 +1,9 @@
 import type { Embed } from "discrub-lib/types/discord-types";
 import { useExportSlice } from "../features/export/use-export-slice";
-import { EmbedType } from "../enum/embed-type";
 import { useAppSlice } from "../features/app/use-app-slice";
 import { stringToTypedArray } from "../utils";
-import { MediaType } from "../enum/media-type";
+import { EmbedType } from "discrub-lib/discord-enum";
+import { MediaType } from "discrub-lib/discrub-enum";
 import VideoMock from "./video-mock.tsx";
 import RemoteVideoMock from "./remote-video.tsx";
 import ImageMock from "./image-mock.tsx";

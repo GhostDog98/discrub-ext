@@ -35,7 +35,7 @@ import {
 } from "./export-types";
 import type { Channel, Message, Guild } from "discrub-lib/types/discord-types";
 import ExportUtils from "./export-utils";
-import { ExportType } from "../../enum/export-type";
+import { ExportType } from "discrub-lib/discrub-enum";
 
 const useExportSlice = () => {
   const dispatch = useAppDispatch();

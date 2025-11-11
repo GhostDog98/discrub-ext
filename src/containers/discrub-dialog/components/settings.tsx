@@ -1,5 +1,5 @@
 import { Paper, Stack, Typography } from "@mui/material";
-import { DiscrubSetting } from "../../../enum/discrub-setting";
+import { DiscrubSetting } from "discrub-lib/discrub-enum";
 import Config from "./config";
 
 function Settings() {

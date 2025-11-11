@@ -3,7 +3,7 @@ import { Button, Menu, MenuItem, DialogActions } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import PauseButton from "../../../components/pause-button";
 import CancelButton from "../../../components/cancel-button";
-import { ExportType } from "../../../enum/export-type";
+import { ExportType } from "discrub-lib/discrub-enum";
 import { Tooltip } from "discrub-lib/common";
 
 type ActionsProps = {

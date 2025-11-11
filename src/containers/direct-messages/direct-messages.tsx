@@ -35,7 +35,7 @@ import SearchCriteria, {
   SearchCriteriaComponentType,
 } from "../search-criteria/search-criteria.tsx";
 import { EnhancedAutocomplete } from "discrub-lib/common";
-import { ChannelType } from "../../enum/channel-type.ts";
+import { ChannelType } from "discrub-lib/discord-enum";
 import AppStatus from "../app-status/app-status.tsx";
 
 function DirectMessages() {

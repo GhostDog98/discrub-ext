@@ -5,7 +5,7 @@ import { useMessageSlice } from "../features/message/use-message-slice.ts";
 import { useState } from "react";
 import { useUserSlice } from "../features/user/use-user-slice.ts";
 import { filterBoth, getEntityHint } from "../utils.ts";
-import { EntityHint } from "../enum/entity-hint.ts";
+import { EntityHint } from "discrub-lib/discrub-enum";
 
 type PrefilterUserProps = {
   isDm?: boolean;

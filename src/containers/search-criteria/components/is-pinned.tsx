@@ -1,6 +1,6 @@
 import { useMessageSlice } from "../../../features/message/use-message-slice";
 import { EnhancedAutocomplete, Tooltip } from "discrub-lib/common";
-import { IsPinnedType } from "../../../enum/is-pinned-type.ts";
+import { IsPinnedType } from "discrub-lib/discord-enum";
 import Box from "@mui/material/Box";
 
 type IsPinnedProps = {
@@ -15,6 +15,7 @@ function IsPinned({ disabled }: IsPinnedProps) {
   const map = {
     [IsPinnedType.UNSET]: "Unset",
     [IsPinnedType.YES]: "Yes",
+    [IsPinnedType.NO]: "No",
   };
 
   return (

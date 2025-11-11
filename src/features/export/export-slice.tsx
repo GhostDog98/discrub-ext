@@ -31,7 +31,7 @@ import {
   setStatus,
 } from "../app/app-slice";
 import { renderToString } from "react-dom/server";
-import { MessageRegex } from "../../enum/message-regex";
+import { MessageRegex } from "discrub-lib/regex";
 import type {
   ExportAvatarMap,
   ExportEmojiMap,
@@ -55,7 +55,7 @@ import {
   ProcessMessagesProps,
   SpecialFormatting,
 } from "./export-types";
-import { ExportType } from "../../enum/export-type";
+import { DiscrubSetting, ExportType, MediaType } from "discrub-lib/discrub-enum";
 import type { Message, Guild, Channel } from "discrub-lib/types/discord-types";
 import ExportUtils from "./export-utils";
 import { AppThunk } from "../../app/store";
@@ -63,11 +63,9 @@ import { ReactElement } from "react";
 import Papa from "papaparse";
 import { flatten } from "flat";
 import { DiscordService } from "discrub-lib/services";
-import { MediaType } from "../../enum/media-type";
 import { isAttachment } from "discrub-lib/discrub-guards";
 import hljs from "highlight.js";
 import { setSetting } from "../../services/chrome-service.ts";
-import { DiscrubSetting } from "../../enum/discrub-setting.ts";
 import { fileTypeFromBlob } from "file-type";
 import { parseISO } from "date-fns";
 

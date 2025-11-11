@@ -6,7 +6,7 @@ import SmartToyIcon from "@mui/icons-material/SmartToy";
 import MessageMock from "../containers/message-mock/message-mock";
 import type { Message } from "discrub-lib/types/discord-types";
 import type { AppSettings } from "discrub-lib/types/discrub-types";
-import { EmbedType } from "../enum/embed-type";
+import { EmbedType } from "discrub-lib/discord-enum";
 import { TableCell } from "@mui/material";
 import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 import { stringToBool } from "../utils";

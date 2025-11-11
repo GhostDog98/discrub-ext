@@ -19,10 +19,7 @@ import type {
   ExportUserMap,
   SearchCriteria,
 } from "discrub-lib/types/discrub-types";
-import { ChannelType } from "./enum/channel-type";
-import { EmbedType } from "./enum/embed-type";
 import { ReactingUser } from "./components/reaction-list-item-button";
-import { MessageType } from "./enum/message-type";
 import {
   addDays,
   addSeconds,
@@ -31,9 +28,9 @@ import {
   parseISO,
   toDate,
 } from "date-fns";
-import { UserDataRefreshRate } from "./enum/user-data-refresh-rate.ts";
-import { IsPinnedType } from "./enum/is-pinned-type.ts";
-import { SortDirection } from "./enum/sort-direction.ts";
+import { ChannelType, EmbedType, IsPinnedType, MessageType } from "discrub-lib/discord-enum";
+import { UserDataRefreshRate } from "discrub-lib/discrub-enum";
+import { SortDirection } from "discrub-lib/common-enum";
 import { START_OFFSET } from "./features/message/contants.ts";
 import filenamify from "filenamify";
 import { nanoid } from "nanoid";

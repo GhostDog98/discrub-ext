@@ -8,8 +8,8 @@ import {
 } from "../../../services/github-service";
 import AnnouncementDialog from "./announcement-dialog.tsx";
 import { setSetting } from "../../../services/chrome-service.ts";
-import { DiscrubSetting } from "../../../enum/discrub-setting.ts";
-import { BrowserEnvironment } from "../../../enum/browser-environment.ts";
+import { DiscrubSetting } from "discrub-lib/discrub-enum";
+import { BrowserEnvironment } from "discrub-lib/discrub-enum";
 import version from "../../../version.ts";
 
 type AnnouncementComponentProps = {

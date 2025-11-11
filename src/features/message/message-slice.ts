@@ -22,7 +22,10 @@ import type {
   ExportReactionMap,
   ExportUserMap,
 } from "discrub-lib/types/discrub-types";
-import { MessageType } from "../../enum/message-type";
+import { IsPinnedType, MessageCategory, MessageType, QueryStringParam, ReactionType } from "discrub-lib/discord-enum";
+import { SortDirection } from "discrub-lib/common-enum";
+import { FilterName, FilterType } from "discrub-lib/discrub-enum";
+import { MessageRegex } from "discrub-lib/regex";
 import {
   getArchivedThreads,
   getThreadsFromMessages,
@@ -40,7 +43,6 @@ import {
   resetStatus,
   isAppStopped,
 } from "../app/app-slice";
-import { MessageRegex } from "../../enum/message-regex";
 import {
   resetExportMaps,
   setExportReactionMap,
@@ -56,16 +58,9 @@ import {
   MessageState,
   SearchResultData,
 } from "./message-types";
-import { SortDirection } from "../../enum/sort-direction";
-import { FilterType } from "../../enum/filter-type";
-import { FilterName } from "../../enum/filter-name";
 import { AppThunk } from "../../app/store";
 import { isMessage } from "discrub-lib/discrub-guards";
-import { QueryStringParam } from "../../enum/query-string-param";
-import { ReactionType } from "../../enum/reaction-type";
-import { MessageCategory } from "../../enum/message-category";
 import { DiscordService } from "discrub-lib/services";
-import { IsPinnedType } from "../../enum/is-pinned-type.ts";
 import {
   ATTACHMENT_REQUIRES_ENTIRE_MSG_REMOVAL,
   MAX_OFFSET,
