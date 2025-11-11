@@ -28,9 +28,9 @@ import { EntityHint } from "../../../enum/entity-hint.ts";
 type BulkContentProps = {
   isDm?: boolean;
   isExporting: boolean;
-  selectedExportChannels: Snowflake[];
+  selectedExportChannels: string[];
   channels: Channel[];
-  setSelectedExportChannels: (ids: Snowflake[]) => void;
+  setSelectedExportChannels: (ids: string[]) => void;
   settings: AppSettings;
   onChangeSettings: (settings: AppSettings) => void;
   loadChannel: (e: string) => void;

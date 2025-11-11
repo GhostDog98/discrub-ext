@@ -1,5 +1,5 @@
 export type RelationshipState = {
-  isLoading: boolean | Maybe;
+  isLoading?: boolean | null;
   friends: unknown[];
 };
 

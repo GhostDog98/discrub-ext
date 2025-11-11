@@ -16,8 +16,8 @@ import {
   AlertColor,
 } from "@mui/material";
 import { AppTask } from "../features/app/app-types";
-import Attachment from "../classes/attachment";
-import { isMessage } from "../app/guards";
+import type { Attachment } from "discrub-lib/types/discord-types";
+import { isMessage } from "discrub-lib/discrub-guards";
 import { Tooltip } from "discrub-lib/common";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { entityIsImage } from "../utils";

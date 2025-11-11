@@ -1,12 +1,12 @@
 import { Button, Stack, Theme, Typography, useTheme } from "@mui/material";
 import type { Guild, Channel } from "discrub-lib/types/discord-types";
-import { isGuild } from "../../../app/guards";
+import { isGuild } from "discrub-lib/discrub-guards";
 import { isDm } from "../../../utils";
 import { transparancy } from "../../../theme.ts";
 import { ExportData } from "../../../features/export/export-types.ts";
 
 type MessageTitleMockProps = {
-  entity: Channel | Guild | Maybe;
+  entity?: Channel | Guild | null;
   getExportPageTitle: () => string;
   exportData: ExportData;
 };

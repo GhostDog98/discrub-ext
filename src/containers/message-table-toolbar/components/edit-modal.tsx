@@ -17,7 +17,7 @@ import {
 import PauseButton from "../../../components/pause-button";
 import CancelButton from "../../../components/cancel-button";
 import { AppTask } from "../../../features/app/app-types";
-import { isMessage } from "../../../app/guards";
+import { isMessage } from "discrub-lib/discrub-guards";
 import MessageMock from "../../message-mock/message-mock";
 import { MISSING_PERMISSION_TO_MODIFY } from "../../../features/message/contants.ts";
 

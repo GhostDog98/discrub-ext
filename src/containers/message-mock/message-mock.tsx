@@ -104,15 +104,15 @@ const MessageMock = ({
     });
   };
 
-  const getLocalAvatar = (userId: Snowflake, avatar: string | Maybe) => {
+  const getLocalAvatar = (userId: string, avatar?: string | null) => {
     return resolveAvatarUrl(userId, avatar, avatarMap).local;
   };
 
-  const getLocalEmoji = (id: Snowflake | Maybe) => {
+  const getLocalEmoji = (id?: string | null) => {
     return resolveEmojiUrl(id, emojiMap).local;
   };
 
-  const getRolePath = (id: Snowflake, icon: string | Maybe) => {
+  const getRolePath = (id: string, icon?: string | null) => {
     return resolveRoleUrl(id, icon, roleMap);
   };
 

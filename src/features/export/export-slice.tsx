@@ -64,7 +64,7 @@ import Papa from "papaparse";
 import { flatten } from "flat";
 import { DiscordService } from "discrub-lib/services";
 import { MediaType } from "../../enum/media-type";
-import { isAttachment } from "../../app/guards.ts";
+import { isAttachment } from "discrub-lib/discrub-guards";
 import hljs from "highlight.js";
 import { setSetting } from "../../services/chrome-service.ts";
 import { DiscrubSetting } from "../../enum/discrub-setting.ts";
@@ -183,7 +183,7 @@ export const exportSlice = createSlice({
     },
     setCurrentExportEntity: (
       state,
-      { payload }: { payload: Guild | Channel | Maybe },
+      { payload }: { payload: Guild | Channel | null | undefined },
     ): void => {
       state.currentExportEntity = payload;
     },
@@ -344,7 +344,7 @@ const _downloadAvatarFromMessage =
     const { exportMaps } = getState().export;
     const { reactionMap, userMap } = exportMaps;
 
-    const avatarLookups: { id: Snowflake; avatar: string | Maybe }[] = [
+    const avatarLookups: { id: string; avatar: string | null | undefined }[] = [
       { id: message.author.id, avatar: message.author.avatar },
     ];
 
@@ -718,7 +718,7 @@ export const getFormattedInnerHtml =
           displayName: null,
         };
 
-        let nick, roles, joinedAt: string | Maybe;
+        let nick, roles, joinedAt: string | null | undefined;
         let roleNames: string[] = [];
         if (selectedGuild) {
           ({ nick, roles, joinedAt } = guilds[selectedGuild.id] || {});
@@ -883,7 +883,7 @@ const _exportJson =
                   );
                 });
               }
-              return Object.assign({ ...message }, { content });
+              return { ...message, content };
             }),
           ),
         ],
@@ -1126,8 +1126,8 @@ export const exportChannels =
           .map((m) => ({ ...m }))
           .sort((a, b) =>
             sortByProperty(
-              Object.assign(a, { date: new Date(a.timestamp) }),
-              Object.assign(b, { date: new Date(b.timestamp) }),
+              { ...a, date: new Date(a.timestamp) },
+              { ...b, date: new Date(b.timestamp) },
               "date",
               sortOverride,
             ),

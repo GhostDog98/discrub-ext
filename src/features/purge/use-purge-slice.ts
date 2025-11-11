@@ -9,7 +9,7 @@ import type { Channel, Guild } from "discrub-lib/types/discord-types";
 const usePurgeSlice = () => {
   const dispatch = useAppDispatch();
 
-  const useIsLoading = (): boolean | Maybe =>
+  const useIsLoading = (): boolean | null | undefined =>
     useAppSelector((state: RootState) => state.purge.isLoading);
 
   const state = {

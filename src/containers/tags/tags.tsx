@@ -64,11 +64,11 @@ function Tags() {
   const userMap = exportState.userMap();
 
   // TODO: Create a tagSlice, so that we don't need to do this!
-  const userMapRef = useRef<ExportUserMap | Maybe>();
+  const userMapRef = useRef<ExportUserMap | null | undefined>();
   userMapRef.current = userMap;
 
   const [anchorEl, setAnchorEl] = useState<
-    (EventTarget & HTMLButtonElement) | Maybe
+    (EventTarget & HTMLButtonElement) | null | undefined
   >(null);
   const [noTagsFound, setNoTagsFound] = useState(false);
   const [skipReplies, setSkipReplies] = useState(true);
@@ -197,11 +197,11 @@ function Tags() {
     }
   };
 
-  const handleGuildChange = async (id: Snowflake | null) => {
+  const handleGuildChange = async (id: string | null) => {
     changeGuild(id);
   };
 
-  const handleChannelChange = async (id: Snowflake | null) => {
+  const handleChannelChange = async (id: string | null) => {
     changeChannel(id);
   };
 

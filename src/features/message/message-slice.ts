@@ -15,7 +15,7 @@ import {
   messageTypeEquals,
   stringToBool,
 } from "../../utils";
-import type { Message, Channel, Reaction } from "discrub-lib/types/discord-types";
+import type { Attachment, Message, Channel, Reaction } from "discrub-lib/types/discord-types";
 import type {
   SearchCriteria,
   ExportReaction,
@@ -59,9 +59,8 @@ import {
 import { SortDirection } from "../../enum/sort-direction";
 import { FilterType } from "../../enum/filter-type";
 import { FilterName } from "../../enum/filter-name";
-import Attachment from "../../classes/attachment";
 import { AppThunk } from "../../app/store";
-import { isMessage } from "../../app/guards";
+import { isMessage } from "discrub-lib/discrub-guards";
 import { QueryStringParam } from "../../enum/query-string-param";
 import { ReactionType } from "../../enum/reaction-type";
 import { MessageCategory } from "../../enum/message-category";
@@ -119,7 +118,7 @@ export const messageSlice = createSlice({
     ): void => {
       state.searchCriteria = { ...state.searchCriteria, ...payload };
     },
-    setSelected: (state, { payload }: { payload: Snowflake[] }): void => {
+    setSelected: (state, { payload }: { payload: string[] }): void => {
       state.selectedMessages = payload;
     },
     setOrder: (
@@ -267,7 +266,7 @@ const _filterMessageType = (
 };
 
 const _filterThread = (
-  filterValue: Snowflake,
+  filterValue: string,
   message: Message,
   inverseActive: boolean,
 ): boolean => {
@@ -552,8 +551,8 @@ export const deleteRawReaction =
 
 export const deleteReaction =
   (
-    channelId: Snowflake,
-    messageId: Snowflake,
+    channelId: string,
+    messageId: string,
     emoji: string,
     userId: string,
     withTask?: boolean,
@@ -632,14 +631,12 @@ export const deleteAttachment =
 
       dispatch(setIsModifying(true));
       if (shouldEdit) {
-        const updatedMessage = Object.assign(
-          { ...message },
-          {
-            attachments: message.attachments.filter(
-              (attch) => attch.id !== attachment.id,
-            ),
-          },
-        );
+        const updatedMessage = {
+          ...message,
+          attachments: message.attachments.filter(
+            (attch) => attch.id !== attachment.id,
+          ),
+        };
         const success = await dispatch(updateMessage(updatedMessage));
         if (!success) {
           await dispatch(
@@ -690,8 +687,8 @@ export const updateRawMessage =
         },
         message.channel_id,
       );
-      if (success) {
-        retObj = Object.assign(retObj, { success: true, data });
+      if (success && data) {
+        retObj = { ...retObj, success: true, data };
       }
     }
 
@@ -734,7 +731,7 @@ export const editMessages =
   (messages: Message[], updateText: string): AppThunk =>
   async (dispatch, getState) => {
     dispatch(setIsModifying(true));
-    let noPermissionThreadIds: Snowflake[] = [];
+    let noPermissionThreadIds: string[] = [];
     for (const message of messages) {
       if (await dispatch(isAppStopped())) break;
 
@@ -759,14 +756,10 @@ export const editMessages =
 
         if (!getState().app.discrubCancelled) {
           success = await dispatch(
-            updateMessage(
-              Object.assign(
-                { ...message },
-                {
-                  content: updateText,
-                },
-              ),
-            ),
+            updateMessage({
+              ...message,
+              content: updateText,
+            }),
           );
         }
 
@@ -848,7 +841,7 @@ export const deleteMessages =
   ): AppThunk =>
   async (dispatch, getState) => {
     dispatch(setIsModifying(true));
-    let noPermissionThreadIds: Snowflake[] = [];
+    let noPermissionThreadIds: string[] = [];
 
     // Check if operation can end early
     const canEndEarly =
@@ -866,15 +859,11 @@ export const deleteMessages =
       );
 
       dispatch(
-        setModifyEntity(
-          Object.assign(
-            { ...currentRow },
-            {
-              _index: count + 1,
-              _total: messages.length,
-            },
-          ),
-        ),
+        setModifyEntity({
+          ...currentRow,
+          _index: count + 1,
+          _total: messages.length,
+        }),
       );
       const isMissingPermission = noPermissionThreadIds.some(
         (tId) => tId === currentRow.channel_id,
@@ -913,14 +902,12 @@ export const deleteMessages =
         } else if (shouldEdit) {
           if (await dispatch(isAppStopped())) break;
           const success = await dispatch(
-            updateMessage(
-              Object.assign(
-                { ...currentRow },
-                deleteConfig.attachments
-                  ? { attachments: [] }
-                  : { content: "" },
-              ),
-            ),
+            updateMessage({
+              ...currentRow,
+              ...(deleteConfig.attachments
+                ? { attachments: [] }
+                : { content: "" }),
+            }),
           );
           if (!success) {
             await dispatch(
@@ -1249,7 +1236,7 @@ const _collectUserNames =
   };
 
 const _collectUserGuildData =
-  (userMap: ExportUserMap, guildId: Snowflake): AppThunk<Promise<void>> =>
+  (userMap: ExportUserMap, guildId: string): AppThunk<Promise<void>> =>
   async (dispatch, getState) => {
     const { settings } = getState().app;
     const { serverNickNameLookup, appUserDataRefreshRate } = settings;
@@ -1315,7 +1302,7 @@ const _resolveMessageReactions =
   async (dispatch, getState) => {
     const { settings } = getState().app;
     const { token } = getState().user;
-    const trackMap: Record<Snowflake, Reaction[]> = {};
+    const trackMap: Record<string, Reaction[]> = {};
     let retArr: Message[] = [...messages];
 
     if (token) {
@@ -1371,7 +1358,8 @@ const _getNextSearchData = (
   const isAllResults = isSearchComplete(nextOffSet, totalMessages);
 
   if (isMaxOffset) {
-    Object.assign(searchData, {
+    return {
+      ...searchData,
       isEndConditionMet:
         isLimitedResults || isAllResults || searchData.isEndConditionMet,
       offset: START_OFFSET,
@@ -1379,19 +1367,18 @@ const _getNextSearchData = (
         ...searchCriteria,
         searchBeforeDate: parseISO(message.timestamp),
       },
-    });
+    };
   } else if (isAllResults) {
-    Object.assign(searchData, {
+    return {
+      ...searchData,
       isEndConditionMet: true,
       offset: START_OFFSET,
-    });
+    };
   } else if (isLimitedResults) {
-    Object.assign(searchData, { isEndConditionMet: true, offset: nextOffSet });
+    return { ...searchData, isEndConditionMet: true, offset: nextOffSet };
   } else {
-    Object.assign(searchData, { offset: nextOffSet });
+    return { ...searchData, offset: nextOffSet };
   }
-
-  return searchData;
 };
 
 const _getNextSearchStatus = (
@@ -1532,7 +1519,7 @@ const _messageTypeAllowed = (type: number) => {
 };
 
 const _getMessages =
-  (channelId: Snowflake): AppThunk<Promise<MessageData>> =>
+  (channelId: string): AppThunk<Promise<MessageData>> =>
   async (dispatch, getState) => {
     const { channels } = getState().channel;
     const { dms } = getState().dm;
@@ -1593,7 +1580,7 @@ const _getMessages =
   };
 
 const _getMessagesFromChannel =
-  (channelId: Snowflake): AppThunk<Promise<Message[]>> =>
+  (channelId: string): AppThunk<Promise<Message[]>> =>
   async (dispatch, getState) => {
     const { settings } = getState().app;
     const { token } = getState().user;

@@ -2,7 +2,7 @@ import { IconButton, Stack, Typography, useTheme } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import bytes from "bytes";
 import { useExportSlice } from "../features/export/use-export-slice";
-import Attachment from "../classes/attachment";
+import type { Attachment } from "discrub-lib/types/discord-types";
 import {
   entityContainsMedia,
   entityIsAudio,

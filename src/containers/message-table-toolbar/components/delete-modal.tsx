@@ -21,7 +21,8 @@ import {
 } from "@mui/material";
 import PauseButton from "../../../components/pause-button";
 import CancelButton from "../../../components/cancel-button";
-import { isMessage, isNonNullable } from "../../../app/guards";
+import { isMessage } from "discrub-lib/discrub-guards";
+import { isNonNullable } from "discrub-lib/common-guards";
 import { DeleteConfiguration } from "../../../features/message/message-types";
 import { AppTask } from "../../../features/app/app-types";
 import MessageMock from "../../message-mock/message-mock";
@@ -30,8 +31,7 @@ import type {
   ExportReactionMap,
   ExportUserMap,
 } from "discrub-lib/types/discrub-types";
-import type { Message } from "discrub-lib/types/discord-types";
-import { Emoji } from "../../../classes/emoji.ts";
+import type { Message, Emoji } from "discrub-lib/types/discord-types";
 import {
   getEncodedEmoji,
   resolveAvatarUrl,

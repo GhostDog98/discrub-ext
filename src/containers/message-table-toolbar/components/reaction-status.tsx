@@ -7,7 +7,7 @@ import {
   resolveEmojiUrl,
 } from "../../../utils.ts";
 import { ImgAdornment } from "discrub-lib/common";
-import { Emoji } from "../../../classes/emoji.ts";
+import type { Emoji } from "discrub-lib/types/discord-types";
 import { AppTaskEntity } from "../../../features/app/app-types.ts";
 
 type ReactionStatusProps = {

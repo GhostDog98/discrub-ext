@@ -34,13 +34,13 @@ export const guildSlice = createSlice({
   name: "guild",
   initialState: initialState,
   reducers: {
-    setIsLoading: (state, { payload }: { payload: boolean | Maybe }): void => {
+    setIsLoading: (state, { payload }: { payload: boolean | null | undefined }): void => {
       state.isLoading = payload;
     },
     setGuilds: (state, { payload }: { payload: Guild[] }): void => {
       state.guilds = payload;
     },
-    setGuild: (state, { payload }: { payload: Snowflake | Maybe }): void => {
+    setGuild: (state, { payload }: { payload: string | null | undefined }): void => {
       state.selectedGuild = state.guilds.find((guild) => guild.id === payload);
     },
     resetGuild: (state): void => {
@@ -64,7 +64,7 @@ export const {
 } = guildSlice.actions;
 
 export const getRoles =
-  (guildId: Snowflake): AppThunk =>
+  (guildId: string): AppThunk =>
   async (dispatch, getState) => {
     const { settings } = getState().app;
     const { guilds } = getState().guild;
@@ -106,7 +106,7 @@ export const getGuilds = (): AppThunk => async (dispatch, getState) => {
 };
 
 export const changeGuild =
-  (guildId: Snowflake | Maybe): AppThunk =>
+  (guildId?: string | null): AppThunk =>
   async (dispatch) => {
     if (guildId) {
       dispatch(setGuild(guildId));
@@ -124,7 +124,7 @@ export const changeGuild =
   };
 
 export const getPreFilterUsers =
-  (guildId: Snowflake): AppThunk =>
+  (guildId: string): AppThunk =>
   (dispatch, getState) => {
     const { currentUser } = getState().user;
     const { userMap } = getState().export.exportMaps;

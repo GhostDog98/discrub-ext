@@ -1,5 +1,5 @@
-import { isAttachment, isGuild, isNonNullable, isRole } from "./app/guards";
-import Attachment from "./classes/attachment";
+import { isRole, isAttachment, isGuild } from "discrub-lib/discrub-guards";
+import { isNonNullable } from "discrub-lib/common-guards";
 import type {
   Channel,
   Embed,
@@ -7,6 +7,9 @@ import type {
   Message,
   Role,
   GuildMemberObject,
+  Attachment,
+  Emoji,
+  User,
 } from "discrub-lib/types/discord-types";
 import type {
   ExportAvatarMap,
@@ -16,7 +19,6 @@ import type {
   ExportUserMap,
   SearchCriteria,
 } from "discrub-lib/types/discrub-types";
-import { Emoji } from "./classes/emoji";
 import { ChannelType } from "./enum/channel-type";
 import { EmbedType } from "./enum/embed-type";
 import { ReactingUser } from "./components/reaction-list-item-button";
@@ -33,7 +35,6 @@ import { UserDataRefreshRate } from "./enum/user-data-refresh-rate.ts";
 import { IsPinnedType } from "./enum/is-pinned-type.ts";
 import { SortDirection } from "./enum/sort-direction.ts";
 import { START_OFFSET } from "./features/message/contants.ts";
-import { User } from "./classes/user.ts";
 import filenamify from "filenamify";
 import { nanoid } from "nanoid";
 
@@ -104,7 +105,7 @@ export const punctuateStringArr = (arr: String[]) => {
  * @param color Integer representation of hexadecimal color code
  * @returns Hexadecimal color code
  */
-export const colorToHex = (color: number | Maybe): string => {
+export const colorToHex = (color: number | null | undefined): string => {
   if (!color) {
     return "#FFF";
   }
@@ -122,11 +123,11 @@ export const getOsSafeString = (str: string) => {
 };
 
 interface FormatUserData {
-  userId?: string | Maybe;
-  userName?: string | Maybe;
-  displayName?: string | Maybe;
-  guildNickname?: string | Maybe;
-  joinedAt?: string | Maybe;
+  userId?: string | null;
+  userName?: string | null;
+  displayName?: string | null;
+  guildNickname?: string | null;
+  joinedAt?: string | null;
   roleNames?: string[];
 }
 
@@ -306,8 +307,8 @@ export const isDm = (channel: Channel) => {
 };
 
 type HighestRole = {
-  colorRole: Role | Maybe;
-  iconRole: Role | Maybe;
+  colorRole?: Role | null;
+  iconRole?: Role | null;
 };
 
 /**
@@ -318,7 +319,7 @@ type HighestRole = {
 export const getHighestRoles = (
   roleIds: string[] = [],
   guild: Guild,
-): HighestRole | Maybe => {
+): HighestRole | null | undefined => {
   if (!guild.roles || !roleIds) {
     return null;
   }
@@ -374,7 +375,7 @@ export const getEncodedEmoji = (emoji: Emoji): string | null => {
   return emojiString || null;
 };
 
-export const isGuildForum = (channel: Channel | Maybe) => {
+export const isGuildForum = (channel?: Channel | null) => {
   return !!(
     channel &&
     [ChannelType.GUILD_FORUM, ChannelType.GUILD_MEDIA].some(
@@ -389,9 +390,9 @@ export type ResolvedFilePathObject = {
 };
 
 export const resolveRoleUrl = (
-  roleId: Snowflake,
-  roleIcon: string | Maybe,
-  roleMap?: ExportRoleMap | Maybe,
+  roleId: string,
+  roleIcon?: string | null,
+  roleMap?: ExportRoleMap | null,
 ): ResolvedFilePathObject => {
   const remoteFilePath =
     roleId && roleIcon
@@ -413,8 +414,8 @@ export const resolveRoleUrl = (
 };
 
 export const resolveEmojiUrl = (
-  emojiId: Snowflake | Maybe,
-  emojiMap?: ExportEmojiMap | Maybe,
+  emojiId?: string | null,
+  emojiMap?: ExportEmojiMap | null,
 ): ResolvedFilePathObject => {
   let localFilePath = emojiId ? emojiMap?.[emojiId] || undefined : undefined;
   if (localFilePath) {
@@ -428,8 +429,8 @@ export const resolveEmojiUrl = (
 };
 
 export const resolveAvatarUrl = (
-  userId: Snowflake,
-  avatar: string | Maybe,
+  userId: string,
+  avatar?: string | null,
   avatarMap?: ExportAvatarMap,
 ): ResolvedFilePathObject => {
   const idAndAvatar = `${userId}/${avatar}`;
@@ -459,7 +460,7 @@ export const stringToTypedArray = <T>(str: string): T[] => {
 export const getReactingUsers = (
   exportReactions: ExportReaction[],
   userMap: ExportUserMap,
-  selectedGuild: Guild | Maybe,
+  selectedGuild?: Guild | null,
 ): ReactingUser[] => {
   return exportReactions
     .filter(({ id: userId }) => userMap[userId])
@@ -612,8 +613,8 @@ export const getSortedMessages = (
     .map((m) => ({ ...m }))
     .sort((a, b) =>
       sortByProperty(
-        Object.assign(a, { date: new Date(a.timestamp) }),
-        Object.assign(b, { date: new Date(b.timestamp) }),
+        { ...a, date: new Date(a.timestamp) },
+        { ...b, date: new Date(b.timestamp) },
         "date",
         sortDirection,
       ),

@@ -47,7 +47,7 @@ const useThreadSlice = () => {
 
   const unarchiveThread = async (
     threadId: string,
-  ): Promise<Maybe | Channel> => {
+  ): Promise<null | undefined | Channel> => {
     const thread = await dispatch(unarchiveThreadAction(threadId));
     return thread;
   };

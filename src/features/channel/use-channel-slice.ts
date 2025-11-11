@@ -18,13 +18,13 @@ const useChannelSlice = () => {
   const useChannels = (): Channel[] =>
     useAppSelector((state: RootState) => state.channel.channels);
 
-  const useSelectedChannel = (): Channel | Maybe =>
+  const useSelectedChannel = (): Channel | null | undefined =>
     useAppSelector((state: RootState) => state.channel.selectedChannel);
 
-  const useIsLoading = (): boolean | Maybe =>
+  const useIsLoading = (): boolean | null | undefined =>
     useAppSelector((state: RootState) => state.channel.isLoading);
 
-  const useSelectedExportChannels = (): Snowflake[] =>
+  const useSelectedExportChannels = (): string[] =>
     useAppSelector((state: RootState) => state.channel.selectedExportChannels);
 
   const state = {
@@ -40,7 +40,7 @@ const useChannelSlice = () => {
   const setChannels = (channels: Channel[]): void => {
     dispatch(setChannelsAction(channels));
   };
-  const setChannel = (channelId: Snowflake): void => {
+  const setChannel = (channelId: string): void => {
     dispatch(setChannelAction(channelId));
   };
   const resetChannel = (): void => {
@@ -49,15 +49,15 @@ const useChannelSlice = () => {
   const setSelectedExportChannels = (channelIds: string[]): void => {
     dispatch(setSelectedExportChannelsAction(channelIds));
   };
-  const getChannels = (guildId: Snowflake): void => {
+  const getChannels = (guildId: string): void => {
     dispatch(getChannelsAction(guildId));
   };
 
-  const changeChannel = (channelId: Snowflake | null): void => {
+  const changeChannel = (channelId: string | null): void => {
     dispatch(changeChannelAction(channelId));
   };
 
-  const loadChannel = (channelId: Snowflake): void => {
+  const loadChannel = (channelId: string): void => {
     dispatch(loadChannelAction(channelId));
   };
 

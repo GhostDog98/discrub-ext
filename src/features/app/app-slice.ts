@@ -80,7 +80,7 @@ export const appSlice = createSlice({
     setModifyEntity: (state, { payload }: { payload: AppTaskEntity }): void => {
       state.task.entity = payload;
     },
-    setStatus: (state, { payload }: { payload: string | Maybe }): void => {
+    setStatus: (state, { payload }: { payload: string | null | undefined }): void => {
       state.task.statusText = payload;
     },
     resetStatus: (state): void => {

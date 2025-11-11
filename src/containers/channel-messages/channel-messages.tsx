@@ -133,12 +133,12 @@ function ChannelMessages() {
     setExpanded(false);
   };
 
-  const handleGuildChange = (id: Snowflake | null) => {
+  const handleGuildChange = (id: string | null) => {
     changeGuild(id);
     setSearchTouched(false);
   };
 
-  const handleChannelChange = (id: Snowflake | null) => {
+  const handleChannelChange = (id: string | null) => {
     changeChannel(id);
     setSearchTouched(false);
   };

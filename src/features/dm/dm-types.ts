@@ -3,16 +3,16 @@ import type { Channel } from "discrub-lib/types/discord-types";
 export type DmState = {
   dms: Channel[];
   selectedDms: Channel[];
-  isLoading: boolean | Maybe;
+  isLoading?: boolean | null;
   preFilterUsers: PreFilterUser[];
 };
 
 export type PreFilterUser = {
-  name: string | Maybe;
-  id: Snowflake;
+  name?: string | null;
+  id: string;
 };
 
 export type SetSelectedDmsProps = {
-  dmIds: Snowflake[];
+  dmIds: string[];
   preFilterUser: PreFilterUser;
 };

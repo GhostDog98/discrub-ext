@@ -11,7 +11,7 @@ import {
   Box,
   IconButton,
 } from "@mui/material";
-import { Emoji } from "../classes/emoji";
+import type { Emoji } from "discrub-lib/types/discord-types";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import VerifiedIcon from "@mui/icons-material/Verified";
@@ -23,10 +23,10 @@ import { FixedSizeList, ListChildComponentProps } from "react-window";
 import ServerEmoji from "./server-emoji";
 
 export type ReactingUser = {
-  displayName: string | Maybe;
-  userName: string | Maybe;
-  id: Snowflake;
-  avatar: string | Maybe;
+  displayName?: string | null;
+  userName?: string | null;
+  id: string;
+  avatar?: string | null;
   burst: boolean;
 };
 

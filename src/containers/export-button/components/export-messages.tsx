@@ -12,7 +12,7 @@ type ExportMessagesProps = {
   componentRef: React.MutableRefObject<HTMLDivElement | null>;
   isExporting: boolean;
   messages: Message[];
-  entity: Channel | Guild | Maybe;
+  entity?: Channel | Guild | null;
   currentPage: number;
   totalPages: number;
   safeEntityName: string;

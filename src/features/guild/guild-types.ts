@@ -3,7 +3,7 @@ import { PreFilterUser } from "../dm/dm-types";
 
 export type GuildState = {
   guilds: Guild[];
-  selectedGuild: Guild | Maybe;
+  selectedGuild?: Guild | null;
   preFilterUsers: PreFilterUser[];
-  isLoading: boolean | Maybe;
+  isLoading?: boolean | null;
 };

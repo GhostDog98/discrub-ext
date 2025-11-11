@@ -27,8 +27,7 @@ import {
   MessageSearchOptions,
 } from "./message-types";
 import { SortDirection } from "../../enum/sort-direction";
-import type { Message } from "discrub-lib/types/discord-types";
-import Attachment from "../../classes/attachment";
+import type { Attachment, Message } from "discrub-lib/types/discord-types";
 
 const useMessageSlice = () => {
   const dispatch = useAppDispatch();
@@ -36,7 +35,7 @@ const useMessageSlice = () => {
   const useMessages = (): Message[] =>
     useAppSelector((state: RootState) => state.message.messages);
 
-  const useSelectedMessages = (): Snowflake[] =>
+  const useSelectedMessages = (): string[] =>
     useAppSelector((state: RootState) => state.message.selectedMessages);
 
   const useFilteredMessages = (): Message[] =>
@@ -45,13 +44,13 @@ const useMessageSlice = () => {
   const useFilters = (): Filter[] =>
     useAppSelector((state: RootState) => state.message.filters);
 
-  const useIsLoading = (): boolean | Maybe =>
+  const useIsLoading = (): boolean | null | undefined =>
     useAppSelector((state: RootState) => state.message.isLoading);
 
   const useOrder = (): SortDirection =>
     useAppSelector((state: RootState) => state.message.order);
 
-  const useOrderBy = (): keyof Message | Maybe =>
+  const useOrderBy = (): keyof Message | null | undefined =>
     useAppSelector((state: RootState) => state.message.orderBy);
 
   const useSearchCriteria = (): SearchCriteria =>
@@ -76,7 +75,7 @@ const useMessageSlice = () => {
     dispatch(setIsLoadingAction(value));
   };
 
-  const setSelected = (messageIds: Snowflake[]) => {
+  const setSelected = (messageIds: string[]) => {
     dispatch(setSelectedAction(messageIds));
   };
 
@@ -128,8 +127,8 @@ const useMessageSlice = () => {
   };
 
   const deleteReaction = (
-    channelId: Snowflake,
-    messageId: Snowflake,
+    channelId: string,
+    messageId: string,
     emoji: string,
     userId: string,
     withTask?: boolean,

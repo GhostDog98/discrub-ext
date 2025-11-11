@@ -4,7 +4,7 @@ const ModalAlert = ({
   debugMessage,
   severity,
 }: {
-  debugMessage: string | Maybe;
+  debugMessage?: string | null;
   severity?: AlertColor;
 }) => {
   return (

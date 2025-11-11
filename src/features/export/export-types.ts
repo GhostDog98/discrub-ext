@@ -18,7 +18,7 @@ export type ExportState = {
   totalPages: number;
   exportMaps: ExportMap;
   exportMessages: Message[];
-  currentExportEntity: Guild | Channel | Maybe;
+  currentExportEntity?: Guild | Channel | null;
   exportData: ExportData;
 };
 
@@ -49,8 +49,8 @@ export type SpecialFormatting = {
   emoji: EmojiRef[];
 };
 
-export type UserMentionRef = { raw: string; userName: string; id: Snowflake };
-export type ChannelRef = { channelId: Snowflake | Maybe; raw: string };
+export type UserMentionRef = { raw: string; userName: string; id: string };
+export type ChannelRef = { channelId?: string | null; raw: string };
 export type UnderlineRef = { text: string; raw: string };
 export type CodeRef = { text: string; raw: string };
 export type ItalicRef = { text: string; raw: string };
@@ -63,7 +63,7 @@ export type LinkRef = {
 };
 export type QuoteRef = { text: string; raw: string };
 export type HyperlinkRef = { raw: string };
-export type EmojiRef = { raw: string; name: string; id: Snowflake };
+export type EmojiRef = { raw: string; name: string; id: string };
 
 export type FilesFromMessagesProps = {
   message: Message;

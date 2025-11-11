@@ -4,9 +4,9 @@ import MessageMock from "../../message-mock/message-mock.tsx";
 import PurgeMessageStatus, {
   PURGE_MESSAGE_STATUS_ID,
 } from "./purge-message-status.tsx";
-import { AppTaskStatus } from "../../../features/app/app-types.ts";
 import { PurgeStatus } from "../../../features/purge/purge-types.ts";
 import type { Message } from "discrub-lib/types/discord-types";
+import type { AppTaskStatus } from "discrub-lib/types/discrub-types";
 
 type PurgeMessageProps = {
   style: React.CSSProperties;

@@ -16,9 +16,9 @@ type ReactionsProps = {
   message: Message;
   reactionMap: ExportReactionMap;
   userMap: ExportUserMap;
-  selectedGuild: Guild | Maybe;
-  getLocalAvatar: (x: Snowflake, y: string | Maybe) => string | undefined;
-  getLocalEmoji: (x: Snowflake | Maybe) => string | undefined;
+  selectedGuild?: Guild | null;
+  getLocalAvatar: (x: string, y?: string | null) => string | undefined;
+  getLocalEmoji: (x?: string | null) => string | undefined;
 };
 
 const Reactions = ({

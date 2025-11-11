@@ -76,7 +76,7 @@ const useExportSlice = () => {
   const useExportMessages = (): Message[] =>
     useAppSelector((state: RootState) => state.export.exportMessages);
 
-  const useCurrentExportEntity = (): Guild | Channel | Maybe =>
+  const useCurrentExportEntity = (): Guild | Channel | null | undefined =>
     useAppSelector((state: RootState) => state.export.currentExportEntity);
 
   const useExportData = (): ExportData =>
@@ -99,7 +99,7 @@ const useExportSlice = () => {
     exportData: useExportData,
   };
 
-  const setCurrentExportEntity = (entity: Guild | Channel | Maybe): void => {
+  const setCurrentExportEntity = (entity: Guild | Channel | null | undefined): void => {
     dispatch(setCurrentExportEntityAction(entity));
   };
 

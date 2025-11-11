@@ -20,7 +20,7 @@ const useGuildSlice = () => {
   const useGuilds = (): Guild[] =>
     useAppSelector((state: RootState) => state.guild.guilds);
 
-  const useSelectedGuild = (): Guild | Maybe =>
+  const useSelectedGuild = (): Guild | null | undefined =>
     useAppSelector((state: RootState) => {
       const { selectedGuild } = state.guild;
       if (selectedGuild) {
@@ -31,7 +31,7 @@ const useGuildSlice = () => {
   const usePreFilterUsers = (): PreFilterUser[] =>
     useAppSelector((state: RootState) => state.guild.preFilterUsers);
 
-  const useIsLoading = (): boolean | Maybe =>
+  const useIsLoading = (): boolean | null | undefined =>
     useAppSelector((state: RootState) => state.guild.isLoading);
 
   const state = {
@@ -49,7 +49,7 @@ const useGuildSlice = () => {
     dispatch(setGuildsAction(guilds));
   };
 
-  const setGuild = (guildId: Snowflake | Maybe) => {
+  const setGuild = (guildId?: string | null) => {
     dispatch(setGuildAction(guildId));
   };
 
@@ -61,7 +61,7 @@ const useGuildSlice = () => {
     dispatch(setPreFilterUsersAction(preFilterUsers));
   };
 
-  const getRoles = (guildId: Snowflake) => {
+  const getRoles = (guildId: string) => {
     dispatch(getRolesAction(guildId));
   };
 
@@ -69,11 +69,11 @@ const useGuildSlice = () => {
     dispatch(getGuildsAction());
   };
 
-  const changeGuild = (guildId: Snowflake | Maybe) => {
+  const changeGuild = (guildId?: string | null) => {
     dispatch(changeGuildAction(guildId));
   };
 
-  const getPreFilterUsers = (guildId: Snowflake) => {
+  const getPreFilterUsers = (guildId: string) => {
     dispatch(getPreFilterUsersAction(guildId));
   };
 

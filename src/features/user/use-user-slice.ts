@@ -9,18 +9,18 @@ import {
   createUserMapping as createUserMappingAction,
 } from "./user-slice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { User } from "../../classes/user";
+import type { User } from "discrub-lib/types/discord-types";
 
 const useUserSlice = () => {
   const dispatch = useAppDispatch();
 
-  const useCurrentUser = (): User | Maybe =>
+  const useCurrentUser = (): User | null | undefined =>
     useAppSelector((state: RootState) => state.user.currentUser);
 
-  const useToken = (): string | Maybe =>
+  const useToken = (): string | null | undefined =>
     useAppSelector((state: RootState) => state.user.token);
 
-  const useIsLoading = (): boolean | Maybe =>
+  const useIsLoading = (): boolean | null | undefined =>
     useAppSelector((state: RootState) => state.user.isLoading);
 
   const state = {
@@ -33,7 +33,7 @@ const useUserSlice = () => {
     dispatch(setIsLoadingAction(value));
   };
 
-  const setToken = (value: string | Maybe): void => {
+  const setToken = (value?: string | null): void => {
     dispatch(setTokenAction(value));
   };
 

@@ -19,7 +19,7 @@ const useDmSlice = () => {
   const useSelectedDms = (): Channel[] =>
     useAppSelector((state: RootState) => state.dm.selectedDms);
 
-  const useIsLoading = (): boolean | Maybe =>
+  const useIsLoading = (): boolean | null | undefined =>
     useAppSelector((state: RootState) => state.dm.isLoading);
 
   const usePreFilterUsers = (): PreFilterUser[] =>
@@ -48,7 +48,7 @@ const useDmSlice = () => {
     dispatch(getDmsAction());
   };
 
-  const setSelectedDms = (dmIds: Snowflake[]) => {
+  const setSelectedDms = (dmIds: string[]) => {
     dispatch(mutateSelectedDmsAction(dmIds));
   };
 

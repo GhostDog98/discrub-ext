@@ -2,7 +2,7 @@ import type { Channel } from "discrub-lib/types/discord-types";
 
 export type ChannelState = {
   channels: Channel[];
-  selectedChannel: Channel | Maybe;
-  isLoading: boolean | Maybe;
-  selectedExportChannels: Snowflake[];
+  selectedChannel?: Channel | null;
+  isLoading?: boolean | null;
+  selectedExportChannels: string[];
 };

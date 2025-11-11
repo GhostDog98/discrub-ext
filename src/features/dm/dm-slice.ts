@@ -21,9 +21,10 @@ export const dmSlice = createSlice({
       state.isLoading = payload;
     },
     setDms: (state, { payload }: { payload: Channel[] }): void => {
-      state.dms = payload.map((dm) =>
-        Object.assign(dm, { name: _getDmName(dm) }),
-      );
+      state.dms = payload.map((dm) => ({
+        ...dm,
+        name: _getDmName(dm),
+      }));
     },
     resetDm: (state): void => {
       state.preFilterUsers = [];
@@ -74,7 +75,7 @@ export const getDms = (): AppThunk => async (dispatch, getState) => {
 };
 
 export const mutateSelectedDms =
-  (dmIds: Snowflake[]): AppThunk =>
+  (dmIds: string[]): AppThunk =>
   (dispatch, getState) => {
     const { currentUser } = getState().user;
     if (currentUser) {

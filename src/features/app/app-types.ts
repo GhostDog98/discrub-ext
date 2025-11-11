@@ -1,24 +1,11 @@
-import Attachment from "../../classes/attachment";
-import type { Channel, Embed, Guild, Message, Reaction, Role } from "discrub-lib/types/discord-types";
-import type { AppSettings } from "discrub-lib/types/discrub-types";
-import { Emoji } from "../../classes/emoji";
-import { User } from "../../classes/user";
+import type { Attachment, Channel, Embed, Emoji, Guild, Message, Reaction, Role, User } from "discrub-lib/types/discord-types";
+import type { AppSettings, AppTaskStatus } from "discrub-lib/types/discrub-types";
 
 export type AppState = {
   discrubPaused: boolean;
   discrubCancelled: boolean;
   task: AppTask;
   settings: AppSettings;
-};
-
-export type AppTaskStatus = {
-  _index?: number;
-  _total?: number;
-  _status?: string;
-  _offset?: number;
-  _data1?: string;
-  _data2?: string;
-  _data3?: string;
 };
 
 export type AppTaskEntity =
@@ -34,12 +21,13 @@ export type AppTaskEntity =
       | Embed
     ) &
       AppTaskStatus)
-  | Maybe;
+  | null
+  | undefined;
 
 export type AppTask = {
   active: boolean;
   entity: AppTaskEntity;
-  statusText: string | Maybe;
+  statusText?: string | null;
 };
 
 export type Timeout = {

@@ -70,7 +70,7 @@ export const getArchivedThreads =
   };
 
 export const unarchiveThread =
-  (threadId: Snowflake): AppThunk<Promise<Channel | Maybe>> =>
+  (threadId: string): AppThunk<Promise<Channel | null | undefined>> =>
   async (dispatch, getState) => {
     const { token } = getState().user;
     const { settings } = getState().app;

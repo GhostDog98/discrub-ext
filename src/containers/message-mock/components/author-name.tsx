@@ -12,8 +12,8 @@ import type { ExportUserMap } from "discrub-lib/types/discrub-types";
 export type AuthorNameProps = {
   msg: Message;
   userMap: ExportUserMap;
-  selectedGuild: Guild | Maybe;
-  getRolePath: (x: Snowflake, y: string | Maybe) => ResolvedFilePathObject;
+  selectedGuild?: Guild | null;
+  getRolePath: (x: string, y?: string | null) => ResolvedFilePathObject;
 };
 
 const AuthorName = ({
@@ -31,8 +31,8 @@ const AuthorName = ({
   } = userMap[author.id]?.guilds[String(selectedGuild?.id)] || {};
 
   let roleNames: string[] = [];
-  let colorRole: Role | Maybe = null;
-  let iconRole: Role | Maybe = null;
+  let colorRole: Role | null | undefined = null;
+  let iconRole: Role | null | undefined = null;
 
   if (selectedGuild) {
     const highestRole = getHighestRoles(guildRoles, selectedGuild);

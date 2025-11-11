@@ -19,7 +19,7 @@ type AnnouncementDialogProps = {
 };
 
 const AnnouncementDialog = ({ handleClose, open }: AnnouncementDialogProps) => {
-  const [markdown, setMarkdown] = useState<string | Maybe>(null);
+  const [markdown, setMarkdown] = useState<string | null | undefined>(null);
 
   useEffect(() => {
     const getMarkdownData = async () => {

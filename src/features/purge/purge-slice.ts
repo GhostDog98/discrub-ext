@@ -16,16 +16,16 @@ import {
 import { PurgeState, PurgeStatus } from "./purge-types";
 import { AppThunk } from "../../app/store";
 import type { Channel, Message, Guild } from "discrub-lib/types/discord-types";
+import type { AppTaskStatus } from "discrub-lib/types/discrub-types";
 import {
   isRemovableMessage,
   isSearchComplete,
   stringToBool,
   stringToTypedArray,
 } from "../../utils";
-import { isGuild } from "../../app/guards.ts";
+import { isGuild } from "discrub-lib/discrub-guards";
 import { MessageData, SearchResultData } from "../message/message-types.ts";
 import { OFFSET_INCREMENT, START_OFFSET } from "../message/contants.ts";
-import { AppTaskStatus } from "../app/app-types.ts";
 
 const initialState: PurgeState = {
   isLoading: null,
@@ -157,11 +157,12 @@ export const _purgeMessages =
         liftThreadRestrictions(message.channel_id, skipThreadIds, threads),
       );
 
-      let modifyEntity = Object.assign({ ...message }, {
+      let modifyEntity = {
+        ...message,
         _index: index + 1,
         _total: Number(totalMessages) - index,
         _status: PurgeStatus.IN_PROGRESS,
-      });
+      };
 
       dispatch(setModifyEntity(modifyEntity));
 
@@ -256,7 +257,7 @@ export const _retainAttachmentMessage =
   async (dispatch, _getState) => {
     if (message.content.length) {
       const { success } = await dispatch(
-        updateRawMessage(Object.assign(message, { content: "" })),
+        updateRawMessage({ ...message, content: "" }),
       );
       modifyEntity._status = success
         ? PurgeStatus.ATTACHMENTS_KEPT

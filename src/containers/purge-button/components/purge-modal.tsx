@@ -10,7 +10,7 @@ import SearchCriteria, {
 } from "../../search-criteria/search-criteria.tsx";
 import PurgeContent from "./purge-content.tsx";
 import type { Message } from "discrub-lib/types/discord-types";
-import { isMessage } from "../../../app/guards.ts";
+import { isMessage } from "discrub-lib/discrub-guards";
 import PurgeStatusHeader from "./purge-status-header.tsx";
 import { useMessageSlice } from "../../../features/message/use-message-slice.ts";
 import Config from "../../discrub-dialog/components/config.tsx";

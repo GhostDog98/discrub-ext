@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 const useRelationshipSlice = () => {
   const dispatch = useAppDispatch();
 
-  const useIsLoading = (): boolean | Maybe =>
+  const useIsLoading = (): boolean | null | undefined =>
     useAppSelector((state: RootState) => state.relationship.isLoading);
 
   const useFriends = (): unknown[] =>
@@ -39,11 +39,11 @@ const useRelationshipSlice = () => {
     dispatch(addFriendAction({ username, discriminator }));
   };
 
-  const deleteFriend = (userId: Snowflake) => {
+  const deleteFriend = (userId: string) => {
     dispatch(deleteFriendAction(userId));
   };
 
-  const openDm = (userId: Snowflake) => {
+  const openDm = (userId: string) => {
     dispatch(openDmAction(userId));
   };
 

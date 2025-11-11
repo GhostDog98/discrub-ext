@@ -41,7 +41,7 @@ const MenuBar = ({
 
   const menuDisabled = !!(isExporting || isGenerating || active || isLoading);
 
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | Maybe>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null | undefined>(null);
   const menuOpen = !!anchorEl;
 
   const menuItems = [

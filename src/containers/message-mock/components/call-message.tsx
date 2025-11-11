@@ -1,14 +1,13 @@
 import { Stack, Typography, useTheme } from "@mui/material";
-import { User } from "../../../classes/user";
-import { MessageCallObject } from "discrub-lib/types/discord-types";
+import type { User, MessageCallObject } from "discrub-lib/types/discord-types";
 import AuthorName, { AuthorNameProps } from "./author-name";
 import { formatDuration, intervalToDuration, parseISO } from "date-fns";
 import PhoneIcon from "@mui/icons-material/Phone";
 import Date, { DateProps } from "./date";
 
 type CallMessageProps = {
-  currentUser: User | Maybe;
-  call: MessageCallObject | Maybe;
+  currentUser: User | null | undefined;
+  call?: MessageCallObject | null;
 } & AuthorNameProps &
   DateProps;
 

@@ -16,7 +16,7 @@ function TokenNotFound() {
   const { state: userState, getUserDataManaully } = useUserSlice();
   const isLoading = userState.isLoading();
 
-  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | Maybe>(null);
+  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null | undefined>(null);
 
   const [token, setToken] = useState("");
   const [authFailed, setAuthFailed] = useState(false);

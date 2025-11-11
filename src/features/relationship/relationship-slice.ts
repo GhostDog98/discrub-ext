@@ -56,7 +56,7 @@ export const addFriend =
   };
 
 export const deleteFriend =
-  (userId: Snowflake): AppThunk =>
+  (userId: string): AppThunk =>
   async (dispatch, getState) => {
     const { settings } = getState().app;
     const { token } = getState().user;
@@ -75,7 +75,7 @@ export const deleteFriend =
   };
 
 export const openDm =
-  (userId: Snowflake): AppThunk =>
+  (userId: string): AppThunk =>
   async (dispatch, getState) => {
     const { settings } = getState().app;
     const { token } = getState().user;

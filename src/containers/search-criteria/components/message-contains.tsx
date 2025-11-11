@@ -9,7 +9,7 @@ type MessageContainsProps = {
 };
 
 function MessageContains({ disabled }: MessageContainsProps) {
-  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | Maybe>(null);
+  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null | undefined>(null);
 
   const { state: messageState, setSearchCriteria } = useMessageSlice();
   const searchCriteria = messageState.searchCriteria();

@@ -6,10 +6,10 @@ import { SortDirection } from "../../enum/sort-direction";
 
 export type MessageState = {
   messages: Message[]; // Message objects
-  selectedMessages: Snowflake[]; // Array of id
+  selectedMessages: string[]; // Array of id
   filteredMessages: Message[]; // Message objects
   filters: Filter[]; // Array of object filters
-  isLoading: boolean | Maybe;
+  isLoading?: boolean | null;
   order: SortDirection;
   orderBy: keyof Message;
   searchCriteria: SearchCriteria;
@@ -18,11 +18,11 @@ export type MessageState = {
 export type Filter =
   | {
       filterName?: undefined;
-      filterValue: Snowflake | Maybe;
+      filterValue?: string | null;
       filterType: FilterType.THREAD;
     }
   | {
-      filterValue: string | string[] | Maybe;
+      filterValue?: string | string[] | null;
       filterType: FilterType.TEXT;
       filterName:
         | FilterName.ATTACHMENT_NAME
@@ -30,7 +30,7 @@ export type Filter =
         | keyof Message;
     }
   | {
-      filterValue: Date | Maybe;
+      filterValue?: Date | null;
       filterType: FilterType.DATE;
       filterName: FilterName.END_TIME | FilterName.START_TIME;
     }

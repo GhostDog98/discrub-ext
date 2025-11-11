@@ -10,10 +10,10 @@ type RepliedToContentProps = {
   browserView: boolean;
   message: Message;
   userMap: ExportUserMap;
-  selectedGuild: Guild | Maybe;
+  selectedGuild?: Guild | null;
   id: string;
   rawHtml: string;
-  getRolePath: (x: Snowflake, y: string | Maybe) => ResolvedFilePathObject;
+  getRolePath: (x: string, y?: string | null) => ResolvedFilePathObject;
 };
 
 const RepliedToContent = ({

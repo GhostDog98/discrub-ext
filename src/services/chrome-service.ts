@@ -11,7 +11,7 @@ import { DateFormat } from "../enum/date-format.ts";
 import { TimeFormat } from "../enum/time-format.ts";
 import { BrowserEnvironment } from "../enum/browser-environment.ts";
 
-type ChromeCallback = (param: string) => Promise<void> | void | Maybe;
+type ChromeCallback = (param: string) => Promise<void> | void | null | undefined;
 
 export const sendChromeMessage = (msg: string, callback?: ChromeCallback) => {
   chrome &&

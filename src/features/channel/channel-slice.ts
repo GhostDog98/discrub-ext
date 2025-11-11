@@ -23,7 +23,7 @@ export const channelSlice = createSlice({
     setChannels: (state, { payload }: { payload: Channel[] }): void => {
       state.channels = payload;
     },
-    setChannel: (state, { payload }: { payload: Snowflake | null }): void => {
+    setChannel: (state, { payload }: { payload: string | null }): void => {
       const selectedChannel = state.channels.find(
         (channel) => channel.id === payload,
       );
@@ -34,7 +34,7 @@ export const channelSlice = createSlice({
     },
     setSelectedExportChannels: (
       state,
-      { payload }: { payload: Snowflake[] },
+      { payload }: { payload: string[] },
     ): void => {
       state.selectedExportChannels = payload;
     },
@@ -50,7 +50,7 @@ export const {
 } = channelSlice.actions;
 
 export const getChannels =
-  (guildId: Snowflake): AppThunk =>
+  (guildId: string): AppThunk =>
   async (dispatch, getState) => {
     const { settings } = getState().app;
     const { token } = getState().user;
@@ -73,7 +73,7 @@ export const getChannels =
   };
 
 export const changeChannel =
-  (channelId: Snowflake | null): AppThunk =>
+  (channelId: string | null): AppThunk =>
   async (dispatch, getState) => {
     const { channels } = getState().channel;
     const isInList = channels.some(({ id }) => id === channelId);
@@ -87,7 +87,7 @@ export const changeChannel =
   };
 
 export const loadChannel =
-  (channelId: Snowflake): AppThunk =>
+  (channelId: string): AppThunk =>
   async (dispatch, getState) => {
     const { settings } = getState().app;
     const { selectedGuild } = getState().guild;

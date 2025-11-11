@@ -12,7 +12,7 @@ import {
   LinearProgress,
 } from "@mui/material";
 import { AppTask } from "../features/app/app-types";
-import { isMessage } from "../app/guards";
+import { isMessage } from "discrub-lib/discrub-guards";
 import ReactionListItemButton, {
   ReactingUser,
 } from "./reaction-list-item-button";
@@ -25,8 +25,8 @@ type ReactionModalProps = {
   open: boolean;
   handleClose: () => void;
   handleReactionDelete: (
-    channelId: Snowflake,
-    messageId: Snowflake,
+    channelId: string,
+    messageId: string,
     emoji: string,
     userId: string,
     withTask: boolean,

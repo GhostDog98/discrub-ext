@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { sendChromeMessage } from "../../services/chrome-service";
 import { UserState } from "./user-types";
 import { AppThunk } from "../../app/store";
-import { User } from "../../classes/user";
+import type { User } from "discrub-lib/types/discord-types";
 import { DiscordService } from "discrub-lib/services";
 import { setExportUserMap } from "../export/export-slice.tsx";
 import { getPreFilterUsers } from "../guild/guild-slice.ts";
@@ -25,7 +25,7 @@ export const userSlice = createSlice({
     setIsLoading: (state, { payload }: { payload: boolean }): void => {
       state.isLoading = payload;
     },
-    setToken: (state, { payload }: { payload: string | Maybe }): void => {
+    setToken: (state, { payload }: { payload: string | null | undefined }): void => {
       state.token = payload;
     },
     setCurrentUser: (state, { payload }: { payload: User }): void => {
