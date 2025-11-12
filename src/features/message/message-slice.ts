@@ -14,7 +14,7 @@ import {
   isUserDataStale,
   messageTypeEquals,
   stringToBool,
-} from "../../utils";
+} from "discrub-lib/discrub-utils";
 import type { Attachment, Message, Channel, Reaction } from "discrub-lib/types/discord-types";
 import type {
   SearchCriteria,
@@ -60,7 +60,7 @@ import {
 } from "./message-types";
 import { AppThunk } from "../../app/store";
 import { isMessage } from "discrub-lib/discrub-guards";
-import { DiscordService } from "discrub-lib/services";
+import { DiscordService } from "discrub-lib/discord-service";
 import {
   ATTACHMENT_REQUIRES_ENTIRE_MSG_REMOVAL,
   MAX_OFFSET,

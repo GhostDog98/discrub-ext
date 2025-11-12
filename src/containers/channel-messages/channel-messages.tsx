@@ -19,7 +19,7 @@ import {
   getSortedChannels,
   getSortedGuilds,
   isCriteriaActive,
-} from "../../utils";
+} from "discrub-lib/discrub-utils";
 import PauseButton from "../../components/pause-button";
 import CancelButton from "../../components/cancel-button";
 import { Tooltip, Table } from "discrub-lib/common";

@@ -2,7 +2,7 @@ import { Button, Stack } from "@mui/material";
 import WestIcon from "@mui/icons-material/West";
 import EastIcon from "@mui/icons-material/East";
 import { transparancy } from "../../../theme.ts";
-import { getOsSafeString } from "../../../utils.ts";
+import { getOsSafeString } from "discrub-lib/discrub-utils";
 
 type PageFooterControlsProps = {
   currentPage: number;

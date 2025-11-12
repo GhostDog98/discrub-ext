@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import { Stack, useTheme, Box, Button } from "@mui/material";
 import AnnouncementIcon from "@mui/icons-material/Announcement";
-import type { AppSettings } from "discrub-lib/types/discrub-types";
-import {
-  Announcement,
-  fetchAnnouncementData,
-} from "../../../services/github-service";
+import type { AppSettings, Announcement } from "discrub-lib/types/discrub-types";
+import { fetchAnnouncementData } from "discrub-lib/github-service";
 import AnnouncementDialog from "./announcement-dialog.tsx";
 import { setSetting } from "../../../services/chrome-service.ts";
 import { DiscrubSetting } from "discrub-lib/discrub-enum";

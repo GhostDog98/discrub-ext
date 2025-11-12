@@ -4,7 +4,9 @@
   "version": "1.12.11",
   "description": "A data manipulation and export tool for Discord.",
   "manifest_version": 3,
-  "permissions": ["storage"],
+  "permissions": [
+    "storage"
+  ],
   "background": {
     "service_worker": "public/resources/js/background.js",
     "type": "module"
@@ -14,13 +16,19 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://discord.com/*"],
-      "js": ["src/chrome/content.js"]
+      "matches": [
+        "*://discord.com/*"
+      ],
+      "js": [
+        "src/chrome/content.js"
+      ]
     }
   ],
   "web_accessible_resources": [
     {
-      "matches": ["*://discord.com/*"],
+      "matches": [
+        "*://discord.com/*"
+      ],
       "resources": [
         "resources/html/mitm.html",
         "resources/media/*",

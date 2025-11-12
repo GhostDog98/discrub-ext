@@ -1,7 +1,7 @@
 import { Button, Stack, Theme, Typography, useTheme } from "@mui/material";
 import type { Guild, Channel } from "discrub-lib/types/discord-types";
 import { isGuild } from "discrub-lib/discrub-guards";
-import { isDm } from "../../../utils";
+import { isDm } from "discrub-lib/discrub-utils";
 import { transparancy } from "../../../theme.ts";
 import { ExportData } from "../../../features/export/export-types.ts";
 

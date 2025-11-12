@@ -1,7 +1,7 @@
 import type { Embed } from "discrub-lib/types/discord-types";
 import { useExportSlice } from "../features/export/use-export-slice";
 import { useAppSlice } from "../features/app/use-app-slice";
-import { stringToTypedArray } from "../utils";
+import { stringToTypedArray } from "discrub-lib/discrub-utils";
 import { EmbedType } from "discrub-lib/discord-enum";
 import { MediaType } from "discrub-lib/discrub-enum";
 import VideoMock from "./video-mock.tsx";

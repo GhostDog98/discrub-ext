@@ -1,7 +1,7 @@
 import { useReactToPrint } from "react-to-print";
 import streamSaver from "streamsaver";
 import { Writer } from "@transcend-io/conflux";
-import { wait } from "../../utils";
+import { wait } from "discrub-lib/common-utils";
 import hljsCss from "./highlight.js.css";
 
 export default class ExportUtils {

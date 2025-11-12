@@ -3,14 +3,14 @@ import { sendChromeMessage } from "../../services/chrome-service";
 import { UserState } from "./user-types";
 import { AppThunk } from "../../app/store";
 import type { User } from "discrub-lib/types/discord-types";
-import { DiscordService } from "discrub-lib/services";
+import { DiscordService } from "discrub-lib/discord-service";
 import { setExportUserMap } from "../export/export-slice.tsx";
 import { getPreFilterUsers } from "../guild/guild-slice.ts";
 import {
   defaultGMOMappingData,
   getGMOMappingData,
   getUserMappingData,
-} from "../../utils.ts";
+} from "discrub-lib/discrub-utils";
 
 const initialState: UserState = {
   currentUser: null,

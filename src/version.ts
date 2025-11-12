@@ -1,5 +1,8 @@
 /**
- * Note: package.json and the extension manifest will still need to be manually updated with this defined version!
+ * Version is automatically synced from package.json
+ * To update version, use: npm version patch|minor|major
  */
-const version = "1.12.11";
+import packageJson from "../package.json";
+
+const version = packageJson.version;
 export default version;

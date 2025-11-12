@@ -7,7 +7,7 @@ import { useDonations } from "../../../hooks/donations.ts";
 import DonationFooterControls from "./donation-footer-controls.tsx";
 import { setSetting } from "../../../services/chrome-service.ts";
 import { DiscrubSetting } from "discrub-lib/discrub-enum";
-import { boolToString } from "../../../utils.ts";
+import { boolToString } from "discrub-lib/discrub-utils";
 
 type DonationComponentProps = {
   showKoFiFeed: boolean;

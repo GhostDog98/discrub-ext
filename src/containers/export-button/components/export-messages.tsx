@@ -4,7 +4,7 @@ import type { Channel, Message, Guild } from "discrub-lib/types/discord-types";
 import MessageTitleMock from "./message-title-mock";
 import MessageMock from "../../message-mock/message-mock";
 import { MessageType } from "discrub-lib/discord-enum";
-import { isNonStandardMessage, messageTypeEquals } from "../../../utils";
+import { isNonStandardMessage, messageTypeEquals } from "discrub-lib/discrub-utils";
 import PageFooterControls from "./page-footer-controls";
 import { ExportData } from "../../../features/export/export-types.ts";
 

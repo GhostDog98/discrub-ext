@@ -4,7 +4,7 @@ import copy from "copy-to-clipboard";
 import type { Message } from "discrub-lib/types/discord-types";
 import { useGuildSlice } from "../features/guild/use-guild-slice";
 import { useExportSlice } from "../features/export/use-export-slice";
-import { resolveAvatarUrl } from "../utils";
+import { resolveAvatarUrl } from "discrub-lib/discrub-utils";
 import MuiImg from "../common-components/mui-img/mui-img";
 
 type AuthorAvatarProps = {

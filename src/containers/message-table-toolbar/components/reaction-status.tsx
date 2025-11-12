@@ -5,7 +5,7 @@ import {
   getEncodedEmoji,
   resolveAvatarUrl,
   resolveEmojiUrl,
-} from "../../../utils.ts";
+} from "discrub-lib/discrub-utils";
 import { ImgAdornment } from "discrub-lib/common";
 import type { Emoji } from "discrub-lib/types/discord-types";
 import { AppTaskEntity } from "../../../features/app/app-types.ts";

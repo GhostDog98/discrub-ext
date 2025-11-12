@@ -17,12 +17,12 @@ import {
   sortByProperty,
   stringToBool,
   stringToTypedArray,
-  wait,
   getThreadEntityName,
   filterThreadsByMessages,
   getPercent,
   getFsUUID,
-} from "../../utils";
+} from "discrub-lib/discrub-utils";
+import { wait } from "discrub-lib/common-utils";
 import { resetChannel, setChannel } from "../channel/channel-slice";
 import {
   isAppStopped,
@@ -62,7 +62,7 @@ import { AppThunk } from "../../app/store";
 import { ReactElement } from "react";
 import Papa from "papaparse";
 import { flatten } from "flat";
-import { DiscordService } from "discrub-lib/services";
+import { DiscordService } from "discrub-lib/discord-service";
 import { isAttachment } from "discrub-lib/discrub-guards";
 import hljs from "highlight.js";
 import { setSetting } from "../../services/chrome-service.ts";

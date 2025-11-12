@@ -17,7 +17,7 @@ import ReactionListItemButton, {
   ReactingUser,
 } from "./reaction-list-item-button";
 import { useExportSlice } from "../features/export/use-export-slice";
-import { getEncodedEmoji, getReactingUsers } from "../utils";
+import { getEncodedEmoji, getReactingUsers } from "discrub-lib/discrub-utils";
 import { useGuildSlice } from "../features/guild/use-guild-slice";
 
 type ReactionModalProps = {

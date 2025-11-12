@@ -7,7 +7,7 @@ import {
   resolveEmojiUrl,
   resolveRoleUrl,
   stringToBool,
-} from "../../utils";
+} from "discrub-lib/discrub-utils";
 import { useGuildSlice } from "../../features/guild/use-guild-slice";
 import { useChannelSlice } from "../../features/channel/use-channel-slice";
 import { useThreadSlice } from "../../features/thread/use-thread-slice";

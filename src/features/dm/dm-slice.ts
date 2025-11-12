@@ -3,7 +3,7 @@ import { resetFilters, resetMessageData } from "../message/message-slice";
 import type { Channel } from "discrub-lib/types/discord-types";
 import { DmState, PreFilterUser, SetSelectedDmsProps } from "./dm-types";
 import { AppThunk } from "../../app/store";
-import { DiscordService } from "discrub-lib/services";
+import { DiscordService } from "discrub-lib/discord-service";
 import { resetPurgeRemovalFrom } from "../app/app-slice.ts";
 
 const initialState: DmState = {

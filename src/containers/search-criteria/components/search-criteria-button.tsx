@@ -6,7 +6,7 @@ import { useGuildSlice } from "../../../features/guild/use-guild-slice.ts";
 import { useDmSlice } from "../../../features/dm/use-dm-slice.ts";
 import { useMessageSlice } from "../../../features/message/use-message-slice.ts";
 import SearchCriteriaModal from "./search-criteria-modal.tsx";
-import { isCriteriaActive } from "../../../utils.ts";
+import { isCriteriaActive } from "discrub-lib/discrub-utils";
 import { VisibleSearchCriteria } from "../search-criteria.tsx";
 
 type SearchCriteriaButtonProps = {

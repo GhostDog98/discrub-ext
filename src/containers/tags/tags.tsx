@@ -19,7 +19,7 @@ import {
   getOsSafeString,
   messageTypeEquals,
   sortByProperty,
-} from "../../utils";
+} from "discrub-lib/discrub-utils";
 import BeforeAndAfterFields from "../../components/before-and-after-fields";
 import PauseButton from "../../components/pause-button";
 import CancelButton from "../../components/cancel-button";

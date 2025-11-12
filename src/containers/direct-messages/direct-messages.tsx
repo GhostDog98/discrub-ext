@@ -13,7 +13,7 @@ import {
 import ExportButton from "../export-button/export-button";
 import PurgeButton from "../purge-button/purge-button";
 import TokenNotFound from "../../components/token-not-found";
-import { getIconUrl, sortByProperty } from "../../utils";
+import { getIconUrl, sortByProperty } from "discrub-lib/discrub-utils";
 import PauseButton from "../../components/pause-button";
 import CancelButton from "../../components/cancel-button";
 import { Tooltip, Table } from "discrub-lib/common";

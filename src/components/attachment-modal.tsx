@@ -20,7 +20,7 @@ import type { Attachment } from "discrub-lib/types/discord-types";
 import { isMessage } from "discrub-lib/discrub-guards";
 import { Tooltip } from "discrub-lib/common";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { entityIsImage } from "../utils";
+import { entityIsImage } from "discrub-lib/discrub-utils";
 import {
   ATTACHMENT_REQUIRES_ENTIRE_MSG_REMOVAL,
   MISSING_PERMISSION_ATTACHMENT,

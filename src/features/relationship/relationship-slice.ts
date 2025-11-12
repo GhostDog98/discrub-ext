@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { AddFriendProps, RelationshipState } from "./relationship-types";
 import { AppThunk } from "../../app/store";
-import { DiscordService } from "discrub-lib/services";
+import { DiscordService } from "discrub-lib/discord-service";
 
 const initialState: RelationshipState = {
   isLoading: null,

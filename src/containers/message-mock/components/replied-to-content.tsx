@@ -4,7 +4,7 @@ import type { ExportUserMap } from "discrub-lib/types/discrub-types";
 import AuthorAvatar from "../../../components/author-avatar";
 import AuthorName from "./author-name";
 import MessageContent from "./message-content";
-import { ResolvedFilePathObject } from "../../../utils";
+import type { ResolvedFilePathObject } from "discrub-lib/types/discrub-types";
 
 type RepliedToContentProps = {
   browserView: boolean;

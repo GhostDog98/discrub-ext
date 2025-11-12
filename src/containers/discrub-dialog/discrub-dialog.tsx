@@ -17,7 +17,7 @@ import DirectMessages from "../direct-messages/direct-messages";
 import Settings from "./components/settings";
 import { initializeSettings } from "../../services/chrome-service";
 import AnnouncementComponent from "./components/announcement-component";
-import { stringToBool } from "../../utils.ts";
+import { stringToBool } from "discrub-lib/discrub-utils";
 import { useExportSlice } from "../../features/export/use-export-slice.ts";
 import { BrowserEnvironment } from "discrub-lib/discrub-enum";
 import version from "../../version.ts";

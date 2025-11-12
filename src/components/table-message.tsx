@@ -9,7 +9,7 @@ import type { AppSettings } from "discrub-lib/types/discrub-types";
 import { EmbedType } from "discrub-lib/discord-enum";
 import { TableCell } from "@mui/material";
 import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
-import { stringToBool } from "../utils";
+import { stringToBool } from "discrub-lib/discrub-utils";
 
 type TableMessageProps = {
   settings: AppSettings;

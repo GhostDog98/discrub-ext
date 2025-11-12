@@ -22,7 +22,7 @@ import {
   isSearchComplete,
   stringToBool,
   stringToTypedArray,
-} from "../../utils";
+} from "discrub-lib/discrub-utils";
 import { isGuild } from "discrub-lib/discrub-guards";
 import { MessageData, SearchResultData } from "../message/message-types.ts";
 import { OFFSET_INCREMENT, START_OFFSET } from "../message/contants.ts";

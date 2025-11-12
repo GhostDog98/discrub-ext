@@ -22,7 +22,7 @@ import {
   getEntityHint,
   getIconUrl,
   getSortedChannels,
-} from "../../../utils.ts";
+} from "discrub-lib/discrub-utils";
 import { EntityHint } from "discrub-lib/discrub-enum";
 
 type BulkContentProps = {

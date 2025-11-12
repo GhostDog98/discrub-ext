@@ -7,7 +7,7 @@ import {
   Box,
   ListItemIcon,
 } from "@mui/material";
-import { Donation } from "../../../services/github-service";
+import type { Donation } from "discrub-lib/types/discrub-types";
 import { differenceInDays, parseISO } from "date-fns";
 import ChatIcon from "@mui/icons-material/Chat";
 import SpeakerNotesOffIcon from "@mui/icons-material/SpeakerNotesOff";

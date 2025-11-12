@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { wait } from "../../utils";
+import { wait } from "discrub-lib/common-utils";
 import type { AppSettings } from "discrub-lib/types/discrub-types";
 import {
   AppTask,

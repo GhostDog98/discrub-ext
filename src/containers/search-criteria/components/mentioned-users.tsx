@@ -4,7 +4,7 @@ import { useDmSlice } from "../../../features/dm/use-dm-slice.ts";
 import { useGuildSlice } from "../../../features/guild/use-guild-slice.ts";
 import { EnhancedAutocomplete, Tooltip } from "discrub-lib/common";
 import { useUserSlice } from "../../../features/user/use-user-slice.ts";
-import { filterBoth, getEntityHint } from "../../../utils.ts";
+import { filterBoth, getEntityHint } from "discrub-lib/discrub-utils";
 import { EntityHint } from "discrub-lib/discrub-enum";
 
 type MentionedUsersProps = {

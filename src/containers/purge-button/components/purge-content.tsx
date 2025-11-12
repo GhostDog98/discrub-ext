@@ -10,7 +10,7 @@ import { useDmSlice } from "../../../features/dm/use-dm-slice.ts";
 import Box from "@mui/material/Box";
 import PurgeMessage from "./purge-message.tsx";
 import { PurgedMessage } from "./purge-modal.tsx";
-import { isCriteriaActive } from "../../../utils.ts";
+import { isCriteriaActive } from "discrub-lib/discrub-utils";
 import { useGuildSlice } from "../../../features/guild/use-guild-slice.ts";
 
 type PurgeContentProps = {

@@ -36,7 +36,7 @@ import {
   getEncodedEmoji,
   resolveAvatarUrl,
   resolveEmojiUrl,
-} from "../../../utils.ts";
+} from "discrub-lib/discrub-utils";
 import ReactionStatus from "./reaction-status.tsx";
 import {
   MISSING_PERMISSION_SKIPPING,

@@ -11,7 +11,7 @@ import {
 import AnnouncementIcon from "@mui/icons-material/Announcement";
 import ReactMarkdown from "react-markdown";
 import { useEffect, useState } from "react";
-import { fetchAnnouncementMarkdown } from "../../../services/github-service.ts";
+import { fetchAnnouncementMarkdown } from "discrub-lib/github-service";
 
 type AnnouncementDialogProps = {
   open: boolean;

@@ -15,7 +15,7 @@ import type { Emoji } from "discrub-lib/types/discord-types";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import VerifiedIcon from "@mui/icons-material/Verified";
-import { resolveAvatarUrl, resolveEmojiUrl } from "../utils";
+import { resolveAvatarUrl, resolveEmojiUrl } from "discrub-lib/discrub-utils";
 import copy from "copy-to-clipboard";
 import { Tooltip } from "discrub-lib/common";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";

@@ -9,7 +9,7 @@ import {
   entityIsImage,
   entityIsVideo,
   stringToTypedArray,
-} from "../utils";
+} from "discrub-lib/discrub-utils";
 import { useAppSlice } from "../features/app/use-app-slice";
 import { MediaType } from "discrub-lib/discrub-enum";
 import VideoMock from "./video-mock.tsx";

@@ -7,7 +7,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import WebhookEmbedMock from "./webhook-embed-mock";
 import { AppTask } from "../features/app/app-types";
-import { getRichEmbeds } from "../utils";
+import { getRichEmbeds } from "discrub-lib/discrub-utils";
 import { isMessage } from "discrub-lib/discrub-guards";
 
 type EmbedModalProps = {

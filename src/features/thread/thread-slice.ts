@@ -6,9 +6,9 @@ import {
 } from "./thread-types";
 import { AppThunk } from "../../app/store";
 import type { Channel } from "discrub-lib/types/discord-types";
-import { DiscordService } from "discrub-lib/services";
+import { DiscordService } from "discrub-lib/discord-service";
 import { setStatus } from "../app/app-slice.ts";
-import { getThreadEntityName } from "../../utils.ts";
+import { getThreadEntityName } from "discrub-lib/discrub-utils";
 
 const initialState: ThreadState = { threads: [] };
 

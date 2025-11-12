@@ -17,7 +17,7 @@ import {
   punctuateStringArr,
   stringToBool,
   stringToTypedArray,
-} from "../../utils";
+} from "discrub-lib/discrub-utils";
 
 type ExportButtonProps = {
   bulk?: boolean;

@@ -17,7 +17,10 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      input: { main: "index.html", button_injection: "button_injection.html" },
+      input: {
+        main: "index.html",
+        button_injection: "button_injection.html",
+      },
       output: { entryFileNames: "[name].js" },
     },
   },

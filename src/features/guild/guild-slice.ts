@@ -6,11 +6,12 @@ import {
   resetMessageData,
 } from "../message/message-slice";
 import type { Guild } from "discrub-lib/types/discord-types";
-import { sortByProperty } from "../../utils";
+import { sortByProperty } from "discrub-lib/discrub-utils";
+import { SortDirection } from "discrub-lib/common-enum";
 import { GuildState } from "./guild-types";
 import { PreFilterUser } from "../dm/dm-types";
 import { AppThunk } from "../../app/store";
-import { DiscordService } from "discrub-lib/services";
+import { DiscordService } from "discrub-lib/discord-service";
 import { resetPurgeRemovalFrom } from "../app/app-slice.ts";
 
 /**
@@ -144,7 +145,7 @@ export const getPreFilterUsers =
             mapping.name !== "User Not Found",
         ),
         { id: currentUser.id, name: currentUser.username },
-      ].sort((a, b) => sortByProperty(a, b, "name", "asc"));
+      ].sort((a, b) => sortByProperty(a, b, "name", SortDirection.ASCENDING));
       dispatch(setPreFilterUsers(filteredPreFilters));
     }
   };

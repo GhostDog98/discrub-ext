@@ -3,7 +3,7 @@ import {
   getEncodedEmoji,
   getReactingUsers,
   isNonStandardMessage,
-} from "../../../utils";
+} from "discrub-lib/discrub-utils";
 import type { Message, Guild } from "discrub-lib/types/discord-types";
 import type {
   ExportReaction,

@@ -13,7 +13,7 @@ import {
   MenuItem,
   FilledInput,
 } from "@mui/material";
-import { sortByProperty } from "../../../utils";
+import { sortByProperty } from "discrub-lib/discrub-utils";
 import { Filter } from "../../../features/message/message-types";
 import type { Channel } from "discrub-lib/types/discord-types";
 import { MessageCategory, MessageType } from "discrub-lib/discord-enum";

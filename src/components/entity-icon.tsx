@@ -1,4 +1,4 @@
-import { getIconUrl } from "../utils";
+import { getIconUrl } from "discrub-lib/discrub-utils";
 import type { Guild, Channel } from "discrub-lib/types/discord-types";
 
 type EntityIconProps = {

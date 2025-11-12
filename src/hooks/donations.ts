@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Donation, fetchDonationData } from "../services/github-service.ts";
+import type { Donation } from "discrub-lib/types/discrub-types";
+import { fetchDonationData } from "discrub-lib/github-service";
 
 export function useDonations() {
   const [donations, setDonations] = useState<Donation[]>([]);

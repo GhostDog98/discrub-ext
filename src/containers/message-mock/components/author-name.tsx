@@ -1,10 +1,10 @@
 import {
-  ResolvedFilePathObject,
   formatUserData,
   getColor,
   getHighestRoles,
   getRoleNames,
-} from "../../../utils";
+} from "discrub-lib/discrub-utils";
+import type { ResolvedFilePathObject } from "discrub-lib/types/discrub-types";
 import CheckIcon from "@mui/icons-material/Check";
 import type { Message, Role, Guild } from "discrub-lib/types/discord-types";
 import type { ExportUserMap } from "discrub-lib/types/discrub-types";
