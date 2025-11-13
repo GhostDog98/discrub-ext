@@ -18,11 +18,12 @@ import { resetPurgeRemovalFrom } from "../app/app-slice.ts";
  * Normalizes a partial Guild object to ensure all required properties exist.
  * This ensures the object will pass the isGuild type guard.
  */
-const normalizeGuild = (partial: Partial<Guild>): Guild => ({
-  ...partial,
-  emojis: partial.emojis ?? [],
-  roles: partial.roles ?? []
-} as Guild);
+const normalizeGuild = (partial: Partial<Guild>): Guild =>
+  ({
+    ...partial,
+    emojis: partial.emojis ?? [],
+    roles: partial.roles ?? [],
+  }) as Guild;
 
 const initialState: GuildState = {
   guilds: [],
@@ -35,13 +36,19 @@ export const guildSlice = createSlice({
   name: "guild",
   initialState: initialState,
   reducers: {
-    setIsLoading: (state, { payload }: { payload: boolean | null | undefined }): void => {
+    setIsLoading: (
+      state,
+      { payload }: { payload: boolean | null | undefined },
+    ): void => {
       state.isLoading = payload;
     },
     setGuilds: (state, { payload }: { payload: Guild[] }): void => {
       state.guilds = payload;
     },
-    setGuild: (state, { payload }: { payload: string | null | undefined }): void => {
+    setGuild: (
+      state,
+      { payload }: { payload: string | null | undefined },
+    ): void => {
       state.selectedGuild = state.guilds.find((guild) => guild.id === payload);
     },
     resetGuild: (state): void => {
@@ -71,7 +78,9 @@ export const getRoles =
     const { guilds } = getState().guild;
     const { token } = getState().user;
     const guild = guilds.find((g) => g.id === guildId);
-    if (guild && !guild.roles && token) {
+    const shouldFetchRoles = guild && !guild.roles.length;
+
+    if (token && shouldFetchRoles) {
       const { data, success } = await new DiscordService(settings).fetchRoles(
         guildId,
         token,
