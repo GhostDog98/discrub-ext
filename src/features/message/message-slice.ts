@@ -15,14 +15,25 @@ import {
   messageTypeEquals,
   stringToBool,
 } from "discrub-lib/discrub-utils";
-import type { Attachment, Message, Channel, Reaction } from "discrub-lib/types/discord-types";
+import type {
+  Attachment,
+  Message,
+  Channel,
+  Reaction,
+} from "discrub-lib/types/discord-types";
 import type {
   SearchCriteria,
   ExportReaction,
   ExportReactionMap,
   ExportUserMap,
 } from "discrub-lib/types/discrub-types";
-import { IsPinnedType, MessageCategory, MessageType, QueryStringParam, ReactionType } from "discrub-lib/discord-enum";
+import {
+  IsPinnedType,
+  MessageCategory,
+  MessageType,
+  QueryStringParam,
+  ReactionType,
+} from "discrub-lib/discord-enum";
 import { SortDirection } from "discrub-lib/common-enum";
 import { FilterName, FilterType } from "discrub-lib/discrub-enum";
 import { MessageRegex } from "discrub-lib/regex";
@@ -1093,10 +1104,8 @@ export const retrieveMessages =
           await dispatch(_generateReactionMap(payload.messages));
         }
         if (!options.excludeUserLookups) {
-          const userMap = await dispatch(_getUserMap(payload.messages));
-          await dispatch(_collectUserNames(userMap));
+          await dispatch(_enrichAllUserData(payload.messages, guildId));
           if (guildId) {
-            await dispatch(_collectUserGuildData(userMap, guildId));
             dispatch(getPreFilterUsers(guildId));
           }
         }
@@ -1131,25 +1140,40 @@ export const getMessageData =
     return payload;
   };
 
-const _getUserMap =
-  (messages: Message[]): AppThunk<Promise<ExportUserMap>> =>
-  async (_, getState) => {
+/**
+ * Consolidated user data enrichment function
+ * Collects user IDs from messages, mentions, and reactions, then enriches with display names and guild data
+ * @param messages - Messages to extract user data from
+ * @param guildId - Guild ID for fetching server-specific data (nicknames, roles, etc.)
+ */
+const _enrichAllUserData =
+  (messages: Message[], guildId: string | null): AppThunk<Promise<void>> =>
+  async (dispatch, getState) => {
     const { userMap: existingUserMap, reactionMap } =
       getState().export.exportMaps;
     const { settings } = getState().app;
+    const { token } = getState().user;
+    const { appUserDataRefreshRate, displayNameLookup, serverNickNameLookup } =
+      settings;
+
+    if (!token) return;
+
     const defaultMapping = {
       userName: null,
       displayName: null,
       avatar: null,
       guilds: {},
     };
+
+    // Step 1: Collect all user IDs from messages, mentions, and reactions
     const userMap: ExportUserMap = {};
     const reactionsEnabled = stringToBool(settings.reactionsEnabled);
-    messages.forEach((message) => {
-      const content = message.content;
-      const author = message.author;
 
+    messages.forEach((message) => {
+      const { content, author, reactions } = message;
       const userId = author.id;
+
+      // Add message author
       if (!userMap[userId]) {
         userMap[userId] = existingUserMap[userId] || {
           ...defaultMapping,
@@ -1159,6 +1183,7 @@ const _getUserMap =
         };
       }
 
+      // Add mentioned users
       Array.from(content.matchAll(MessageRegex.USER_MENTION))?.forEach(
         ({ groups: userMentionGroups }) => {
           const mentionId = userMentionGroups?.user_id;
@@ -1168,124 +1193,101 @@ const _getUserMap =
         },
       );
 
+      // Add reacting users
       if (reactionsEnabled) {
-        for (const reaction of message.reactions || []) {
+        for (const reaction of reactions || []) {
           const encodedEmoji = getEncodedEmoji(reaction.emoji);
           if (encodedEmoji) {
             const exportReactions =
               reactionMap[message.id]?.[encodedEmoji] || [];
             exportReactions.forEach(({ id: reactingUserId }) => {
-              if (!userMap[reactingUserId])
+              if (!userMap[reactingUserId]) {
                 userMap[reactingUserId] =
                   existingUserMap[reactingUserId] || defaultMapping;
+              }
             });
           }
         }
       }
     });
 
-    return userMap;
-  };
-
-const _collectUserNames =
-  (userMap: ExportUserMap): AppThunk<Promise<void>> =>
-  async (dispatch, getState) => {
-    const { settings } = getState().app;
-    const { displayNameLookup, appUserDataRefreshRate } = settings;
-    const { token } = getState().user;
-    const { userMap: existingUserMap } = getState().export.exportMaps;
+    // Step 2: Enrich user data (display names and guild data) in a single loop
     const updateMap = { ...userMap };
+    const userIds = Object.keys(updateMap);
+    const shouldFetchDisplayNames = stringToBool(displayNameLookup);
+    const shouldFetchGuildData = guildId && stringToBool(serverNickNameLookup);
 
-    if (token && stringToBool(displayNameLookup)) {
-      const userIds = Object.keys(updateMap);
-      for (const [_i, userId] of userIds.entries()) {
-        if (await dispatch(isAppStopped())) break;
-        const mapping = existingUserMap[userId] || updateMap[userId];
-        const { userName, displayName, timestamp } = mapping;
+    for (const userId of userIds) {
+      if (await dispatch(isAppStopped())) break;
 
-        const isMissingOrStale =
-          (!userName && !displayName) ||
-          isUserDataStale(timestamp, appUserDataRefreshRate);
+      const currentMapping = existingUserMap[userId] || updateMap[userId];
+      const { userName, displayName, timestamp, guilds } = currentMapping;
 
-        if (isMissingOrStale) {
-          const status = `Retrieving alias data for ${userName || userId}`;
-          dispatch(setStatus(status));
-          const { success, data } = await new DiscordService(settings).getUser(
-            token,
-            userId,
-          );
-          if (success && data) {
-            updateMap[userId] = {
-              ...mapping,
-              ...getUserMappingData(data),
-            };
-          } else {
-            const errorMsg = `Unable to retrieve data from userId: ${userId}`;
-            console.error(errorMsg);
-          }
+      // Check if user display name needs fetching
+      const needsDisplayName =
+        shouldFetchDisplayNames &&
+        ((!userName && !displayName) ||
+          isUserDataStale(timestamp, appUserDataRefreshRate));
+
+      // Check if guild data needs fetching
+      const needsGuildData =
+        shouldFetchGuildData &&
+        (!guilds[guildId] ||
+          isUserDataStale(guilds[guildId]?.timestamp, appUserDataRefreshRate));
+
+      // Fetch display name if needed
+      if (needsDisplayName) {
+        const status = `Retrieving alias data for ${userName || userId}`;
+        dispatch(setStatus(status));
+        const { success, data } = await new DiscordService(settings).getUser(
+          token,
+          userId,
+        );
+        if (success && data) {
+          updateMap[userId] = {
+            ...currentMapping,
+            ...getUserMappingData(data),
+          };
+        } else {
+          console.error(`Unable to retrieve data from userId: ${userId}`);
         }
       }
-      dispatch(resetStatus());
-      dispatch(setExportUserMap({ ...existingUserMap, ...updateMap }));
-    }
-  };
 
-const _collectUserGuildData =
-  (userMap: ExportUserMap, guildId: string): AppThunk<Promise<void>> =>
-  async (dispatch, getState) => {
-    const { settings } = getState().app;
-    const { serverNickNameLookup, appUserDataRefreshRate } = settings;
-    const { token } = getState().user;
-    const { userMap: existingUserMap } = getState().export.exportMaps;
-    const updateMap = { ...userMap };
+      // Fetch guild data if needed
+      if (needsGuildData) {
+        const updatedMapping = updateMap[userId];
+        const status = `Retrieving server data for ${updatedMapping.userName || userId}`;
+        dispatch(setStatus(status));
+        const { success, data } = await new DiscordService(
+          settings,
+        ).fetchGuildUser(guildId, userId, token);
 
-    if (token && stringToBool(serverNickNameLookup)) {
-      const userIds = Object.keys(updateMap);
-      for (const [_i, userId] of userIds.entries()) {
-        if (await dispatch(isAppStopped())) break;
-        const userMapping = existingUserMap[userId] || updateMap[userId];
-        const userGuilds = userMapping.guilds;
-
-        const isMissingOrStale =
-          !userGuilds[guildId] ||
-          isUserDataStale(
-            userGuilds[guildId].timestamp,
-            appUserDataRefreshRate,
+        if (success && data) {
+          updateMap[userId] = {
+            ...updatedMapping,
+            guilds: {
+              ...updatedMapping.guilds,
+              [guildId]: getGMOMappingData(data),
+            },
+          };
+        } else {
+          console.error(
+            `Unable to retrieve guild user data from userId ${userId} and guildId ${guildId}`,
           );
-
-        if (isMissingOrStale) {
-          const status = `Retrieving server data for ${userMapping.userName || userId}`;
-          dispatch(setStatus(status));
-          const { success, data } = await new DiscordService(
-            settings,
-          ).fetchGuildUser(guildId, userId, token);
-
-          if (success && data) {
-            updateMap[userId] = {
-              ...userMapping,
-              guilds: {
-                ...userGuilds,
-                [guildId]: getGMOMappingData(data),
-              },
-            };
-          } else {
-            const errorMsg = `Unable to retrieve guild user data from userId ${userId} and guildId ${guildId}`;
-            console.error(errorMsg);
-            updateMap[userId] = {
-              ...userMapping,
-              guilds: {
-                ...userGuilds,
-                [guildId]: {
-                  ...defaultGMOMappingData,
-                },
-              },
-            };
-          }
+          updateMap[userId] = {
+            ...updatedMapping,
+            guilds: {
+              ...updatedMapping.guilds,
+              [guildId]: defaultGMOMappingData,
+            },
+          };
         }
       }
-      dispatch(resetStatus());
-      dispatch(setExportUserMap({ ...existingUserMap, ...updateMap }));
     }
+
+    // Step 3: Single dispatch to update the user map
+    dispatch(resetStatus());
+    dispatch(setExportUserMap({ ...existingUserMap, ...updateMap }));
   };
 
 /**
