@@ -20,6 +20,7 @@ import type {
   Message,
   Channel,
   Reaction,
+  User,
 } from "discrub-lib/types/discord-types";
 import type {
   SearchCriteria,
@@ -82,6 +83,43 @@ import {
   REACTION_REMOVE_FAILED_FOR,
   START_OFFSET,
 } from "./contants.ts";
+
+/**
+ * Centralized status message builders for consistent user feedback
+ */
+const StatusMessages = {
+  // Message retrieval
+  retrievedMessages: (count: number) => `Retrieved ${count} messages`,
+
+  retrievedSearchResults: (count: number, total: number) =>
+    `Retrieved ${count} of ${total} messages`,
+
+  retrievedThreads: (count: number) => `Retrieved ${count} threads`,
+
+  retrievingThreadMessages: (threadName: string) =>
+    `Retrieving messages for thread - ${threadName}`,
+
+  // Reaction handling
+  retrievingReactionUsers: (
+    emojiName: string,
+    current: number,
+    total: number,
+    hasBrackets: boolean = false,
+  ) => {
+    const brackets = hasBrackets ? ":" : "";
+    return `Retrieving users who reacted with ${brackets}${emojiName}${brackets} for message ${current} of ${total}`;
+  },
+
+  searchingReactions: (current: number, total: number) =>
+    `Searching for reactions around message ${current} of ${total}`,
+
+  // User data enrichment
+  retrievingUserAlias: (userName: string) =>
+    `Retrieving alias data for ${userName}`,
+
+  retrievingServerData: (userName: string) =>
+    `Retrieving server data for ${userName}`,
+} as const;
 
 const _descendingComparator = <Message>(
   a: Message,
@@ -976,6 +1014,51 @@ export const resetMessageData = (): AppThunk => (dispatch) => {
   dispatch(resetStatus());
 };
 
+/**
+ * Generic pagination helper for fetching data with cursor-based pagination
+ * @param fetchFn - Function that fetches a page of data given the last ID
+ * @param onBatch - Optional callback to process each batch of results
+ * @param pageSize - Expected page size to determine if we've reached the end (default: 100)
+ */
+const _paginatedFetch =
+  <T extends { id: string }>(
+    fetchFn: (
+      lastId: string | null,
+    ) => Promise<{ success: boolean; data?: T[] }>,
+    onBatch?: (batch: T[]) => void | Promise<void>,
+    pageSize = 100,
+  ): AppThunk<Promise<T[]>> =>
+  async (dispatch) => {
+    const allResults: T[] = [];
+    let lastId: string | null = null;
+    let reachedEnd = false;
+
+    while (!reachedEnd) {
+      if (await dispatch(isAppStopped())) break;
+
+      const { success, data } = await fetchFn(lastId);
+
+      if (success && data && data.length > 0) {
+        allResults.push(...data);
+        lastId = data[data.length - 1].id;
+
+        // Call batch processor if provided
+        if (onBatch) {
+          await onBatch(data);
+        }
+
+        // Check if we've reached the end (received less than a full page)
+        if (data.length < pageSize) {
+          reachedEnd = true;
+        }
+      } else {
+        reachedEnd = true;
+      }
+    }
+
+    return allResults;
+  };
+
 const _fetchReactingUserIds =
   (
     message: Message,
@@ -986,41 +1069,45 @@ const _fetchReactingUserIds =
     const { settings } = getState().app;
     const { token } = getState().user;
 
-    for (const type of [ReactionType.NORMAL, ReactionType.BURST]) {
-      let reachedEnd = false;
-      let lastId = null;
-      while (!reachedEnd) {
-        if ((await dispatch(isAppStopped())) || !token) break;
-        const { success, data } = await new DiscordService(
-          settings,
-        ).getReactions(
-          token,
-          message.channel_id,
-          message.id,
-          encodedEmoji,
-          type,
-          lastId,
-        );
-        if (success && data && data.length) {
-          const { userMap } = getState().export.exportMaps;
-          const updateMap = { ...userMap };
-          data.forEach((u) => {
-            exportReactions.push({
-              id: u.id,
-              burst: type === ReactionType.BURST,
-            });
+    if (!token) return exportReactions;
 
-            updateMap[u.id] = {
-              ...getUserMappingData(u),
-              guilds: updateMap[u.id]?.guilds || {},
-            };
-          });
-          dispatch(setExportUserMap(updateMap));
-          lastId = data[data.length - 1].id;
-        } else {
-          reachedEnd = true;
-        }
-      }
+    for (const type of [ReactionType.NORMAL, ReactionType.BURST]) {
+      const isBurst = type === ReactionType.BURST;
+
+      // Use pagination helper to fetch all users who reacted with this type
+      const users = await dispatch(
+        _paginatedFetch<User>(
+          (lastId) =>
+            new DiscordService(settings).getReactions(
+              token,
+              message.channel_id,
+              message.id,
+              encodedEmoji,
+              type,
+              lastId,
+            ),
+          (batch) => {
+            // Update user map incrementally as we process each batch
+            const { userMap } = getState().export.exportMaps;
+            const updateMap = { ...userMap };
+            batch.forEach((u) => {
+              updateMap[u.id] = {
+                ...getUserMappingData(u),
+                guilds: updateMap[u.id]?.guilds || {},
+              };
+            });
+            dispatch(setExportUserMap(updateMap));
+          },
+        ),
+      );
+
+      // Convert users to ExportReaction objects
+      users.forEach((u) => {
+        exportReactions.push({
+          id: u.id,
+          burst: isBurst,
+        });
+      });
     }
 
     return exportReactions;
@@ -1040,10 +1127,17 @@ const _generateReactionMap =
         for (const [_i, reaction] of message.reactions.entries()) {
           const { emoji } = reaction;
           const encodedEmoji = getEncodedEmoji(emoji);
-          const brackets = emoji.id ? ":" : "";
 
-          const status = `Retrieving users who reacted with ${brackets}${emoji.name}${brackets} for message ${mI + 1} of ${filteredMessages.length}`;
-          dispatch(setStatus(status));
+          dispatch(
+            setStatus(
+              StatusMessages.retrievingReactionUsers(
+                emoji.name || "unknown",
+                mI + 1,
+                filteredMessages.length,
+                !!emoji.id,
+              ),
+            ),
+          );
 
           if ((await dispatch(isAppStopped())) || !encodedEmoji) break;
 
@@ -1237,8 +1331,7 @@ const _enrichAllUserData =
 
       // Fetch display name if needed
       if (needsDisplayName) {
-        const status = `Retrieving alias data for ${userName || userId}`;
-        dispatch(setStatus(status));
+        dispatch(setStatus(StatusMessages.retrievingUserAlias(userName || userId)));
         const { success, data } = await new DiscordService(settings).getUser(
           token,
           userId,
@@ -1256,8 +1349,13 @@ const _enrichAllUserData =
       // Fetch guild data if needed
       if (needsGuildData) {
         const updatedMapping = updateMap[userId];
-        const status = `Retrieving server data for ${updatedMapping.userName || userId}`;
-        dispatch(setStatus(status));
+        dispatch(
+          setStatus(
+            StatusMessages.retrievingServerData(
+              updatedMapping.userName || userId,
+            ),
+          ),
+        );
         const { success, data } = await new DiscordService(
           settings,
         ).fetchGuildUser(guildId, userId, token);
@@ -1307,8 +1405,9 @@ const _resolveMessageReactions =
         if (await dispatch(isAppStopped())) break;
 
         if (!trackMap[message.id]) {
-          const status = `Searching for reactions around message ${i + 1} of ${messages.length}`;
-          dispatch(setStatus(status));
+          dispatch(
+            setStatus(StatusMessages.searchingReactions(i + 1, messages.length)),
+          );
           const { success, data } = await new DiscordService(
             settings,
           ).fetchMessageData(
@@ -1335,6 +1434,15 @@ const _resolveMessageReactions =
     return retArr;
   };
 
+/**
+ * Calculate the next search offset and criteria for paginated search
+ * @param message - Last message from current batch (used for timestamp when resetting offset)
+ * @param offset - Current search offset
+ * @param totalMessages - Total messages available
+ * @param isEndConditionMet - Whether end condition was already met
+ * @param searchCriteria - Current search criteria
+ * @param endOffSet - Optional limit on how far to search
+ */
 const _getNextSearchData = (
   message: Message,
   offset: number,
@@ -1343,39 +1451,31 @@ const _getNextSearchData = (
   searchCriteria: SearchCriteria,
   endOffSet?: number,
 ) => {
-  const searchData = {
-    offset: offset,
-    isEndConditionMet: isEndConditionMet,
-    searchCriteria: searchCriteria,
-  };
   const nextOffSet = offset + OFFSET_INCREMENT;
-  const isMaxOffset = offset === MAX_OFFSET;
-  const isLimitedResults =
-    !!endOffSet && isSearchComplete(nextOffSet, endOffSet);
-  const isAllResults = isSearchComplete(nextOffSet, totalMessages);
 
-  if (isMaxOffset) {
+  // Check completion conditions
+  const reachedEndOffset = !!endOffSet && isSearchComplete(nextOffSet, endOffSet);
+  const reachedAllResults = isSearchComplete(nextOffSet, totalMessages);
+  const shouldStop = isEndConditionMet || reachedEndOffset || reachedAllResults;
+
+  // Handle max offset - need to reset with new before date
+  if (offset === MAX_OFFSET) {
     return {
-      ...searchData,
-      isEndConditionMet:
-        isLimitedResults || isAllResults || searchData.isEndConditionMet,
       offset: START_OFFSET,
+      isEndConditionMet: shouldStop,
       searchCriteria: {
         ...searchCriteria,
         searchBeforeDate: parseISO(message.timestamp),
       },
     };
-  } else if (isAllResults) {
-    return {
-      ...searchData,
-      isEndConditionMet: true,
-      offset: START_OFFSET,
-    };
-  } else if (isLimitedResults) {
-    return { ...searchData, isEndConditionMet: true, offset: nextOffSet };
-  } else {
-    return { ...searchData, offset: nextOffSet };
   }
+
+  // Continue with next offset or reset if all results found
+  return {
+    offset: reachedAllResults ? START_OFFSET : nextOffSet,
+    isEndConditionMet: shouldStop,
+    searchCriteria,
+  };
 };
 
 const _getNextSearchStatus = (
@@ -1384,14 +1484,25 @@ const _getNextSearchStatus = (
   totalMessages: number,
   channel?: Channel,
 ) => {
-  let status = "";
   if (isGuildForum(channel)) {
-    status = `Retrieved ${threads.length} threads`;
+    return StatusMessages.retrievedThreads(threads.length);
   } else {
-    status = `Retrieved ${messages.length} of ${totalMessages} messages`;
+    return StatusMessages.retrievedSearchResults(messages.length, totalMessages);
   }
-  return status;
 };
+
+/**
+ * Find a channel by ID across both guild channels and DMs
+ * @param channelId - The channel ID to search for
+ */
+const _findChannel =
+  (channelId: string | null): AppThunk<Channel | undefined> =>
+  (_, getState) => {
+    if (!channelId) return undefined;
+    const { channels } = getState().channel;
+    const { dms } = getState().dm;
+    return [...channels, ...dms].find((c) => c.id === channelId);
+  };
 
 const _getSearchMessages =
   (
@@ -1407,10 +1518,7 @@ const _getSearchMessages =
   async (dispatch, getState) => {
     const { settings } = getState().app;
     const { token } = getState().user;
-    const { channels } = getState().channel;
-    const { dms } = getState().dm;
-    const combinedChannels = [...channels, ...dms];
-    const channel = combinedChannels.find((c) => c.id === channelId);
+    const channel = dispatch(_findChannel(channelId));
 
     let knownMessages: Message[] = [];
     let knownThreads: Channel[] = [];
@@ -1518,12 +1626,8 @@ const _messageTypeAllowed = (type: number) => {
 const _getMessages =
   (channelId: string): AppThunk<Promise<MessageData>> =>
   async (dispatch, getState) => {
-    const { channels } = getState().channel;
-    const { dms } = getState().dm;
     const { searchCriteria } = getState().message;
-    const channel =
-      channels.find((c) => channelId === c.id) ||
-      dms.find((d) => channelId === d.id);
+    const channel = dispatch(_findChannel(channelId));
     const trackedThreads: Channel[] = [];
     let messages: Message[] = [];
 
@@ -1561,8 +1665,11 @@ const _getMessages =
         archivedThreads.forEach((at) => trackedThreads.push(at));
 
         for (const thread of trackedThreads) {
-          const status = `Retrieving messages for thread - ${getThreadEntityName(thread)}`;
-          dispatch(setStatus(status));
+          dispatch(
+            setStatus(
+              StatusMessages.retrievingThreadMessages(getThreadEntityName(thread)),
+            ),
+          );
           messages = [
             ...messages,
             ...(await dispatch(_getMessagesFromChannel(thread.id))),
@@ -1581,38 +1688,32 @@ const _getMessagesFromChannel =
   async (dispatch, getState) => {
     const { settings } = getState().app;
     const { token } = getState().user;
-    let lastId = "";
-    let reachedEnd = false;
-    let messages: Message[] = [];
 
-    if (token) {
-      while (!reachedEnd) {
-        if (await dispatch(isAppStopped())) break;
-        const { success, data } = await new DiscordService(
-          settings,
-        ).fetchMessageData(token, lastId, channelId);
+    if (!token) return [];
 
-        if (success && data) {
-          if (data.length < 100) reachedEnd = true;
-          if (data.length > 0) lastId = data[data.length - 1].id;
-          const hasValidMessages = data[0]?.content || data[0]?.attachments;
-
+    let messageCount = 0;
+    const messages = await dispatch(
+      _paginatedFetch<Message>(
+        (lastId) =>
+          new DiscordService(settings).fetchMessageData(
+            token,
+            lastId || "",
+            channelId,
+          ),
+        (batch) => {
+          // Only update status if batch has valid messages
+          const hasValidMessages =
+            batch[0]?.content || batch[0]?.attachments;
           if (hasValidMessages) {
-            messages = [
-              ...messages,
-              ...data.filter((m) => _messageTypeAllowed(m.type)),
-            ];
-
-            const status = `Retrieved ${messages.length} messages`;
-            dispatch(setStatus(status));
+            messageCount += batch.length;
+            dispatch(setStatus(StatusMessages.retrievedMessages(messageCount)));
           }
-        } else {
-          break;
-        }
-      }
-    }
+        },
+      ),
+    );
 
-    return messages;
+    // Filter to only allowed message types
+    return messages.filter((m) => _messageTypeAllowed(m.type));
   };
 
 export default messageSlice.reducer;
