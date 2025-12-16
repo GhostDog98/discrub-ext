@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import FilterComponent from "./filter-component";
 import type { Channel } from "discrub-lib/types/discord-types";
-import { Filter } from "../../../features/message/message-types";
+import type { Filter } from "discrub-lib/types/discrub-types";
 
 type FilterModalProps = {
   open: boolean;

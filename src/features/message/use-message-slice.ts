@@ -20,10 +20,9 @@ import {
   deleteReaction as deleteReactionAction,
 } from "./message-slice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import type { SearchCriteria } from "discrub-lib/types/discrub-types";
+import type { SearchCriteria, Filter } from "discrub-lib/types/discrub-types";
 import {
   DeleteConfiguration,
-  Filter,
   MessageSearchOptions,
 } from "./message-types";
 import { SortDirection } from "discrub-lib/common-enum";

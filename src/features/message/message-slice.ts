@@ -27,16 +27,16 @@ import type {
   ExportReaction,
   ExportReactionMap,
   ExportUserMap,
+  Filter,
 } from "discrub-lib/types/discrub-types";
 import {
   IsPinnedType,
-  MessageCategory,
   MessageType,
   QueryStringParam,
   ReactionType,
 } from "discrub-lib/discord-enum";
 import { SortDirection } from "discrub-lib/common-enum";
-import { FilterName, FilterType } from "discrub-lib/discrub-enum";
+import { FilterType } from "discrub-lib/discrub-enum";
 import { MessageRegex } from "discrub-lib/regex";
 import {
   getArchivedThreads,
@@ -61,10 +61,10 @@ import {
   setExportUserMap,
 } from "../export/export-slice";
 import { getPreFilterUsers } from "../guild/guild-slice";
-import { isDate, parseISO, isAfter, isBefore, isEqual } from "date-fns";
+import { isDate, parseISO } from "date-fns";
+import { filterMessages as discrubFilterMessages } from "discrub-lib/filtering";
 import {
   DeleteConfiguration,
-  Filter,
   MessageData,
   MessageSearchOptions,
   MessageState,
@@ -127,123 +127,6 @@ const _descendingComparator = <Message>(
   orderBy: keyof Message,
 ) => {
   return b[orderBy] < a[orderBy] ? -1 : b[orderBy] > a[orderBy] ? 1 : 0;
-};
-
-/**
- * Apply inverse logic to a filter condition
- * @param matches - Whether the condition matched
- * @param inverseActive - Whether inverse filtering is enabled
- * @returns true if message should be included, false otherwise
- */
-const _applyInverseLogic = (
-  matches: boolean,
-  inverseActive: boolean,
-): boolean => {
-  return inverseActive ? !matches : matches;
-};
-
-type TimeComparison = "before" | "after";
-
-/**
- * Unified timestamp filter for both start and end time filtering
- * @param filterValue - The date to compare against
- * @param message - The message to filter
- * @param inverseActive - Whether inverse filtering is enabled
- * @param comparison - Whether to check if message is 'before' or 'after' the filter date
- */
-const _filterByTimestamp = (
-  filterValue: Date,
-  message: Message,
-  inverseActive: boolean,
-  comparison: TimeComparison,
-): boolean => {
-  const messageDate = parseISO(message.timestamp);
-
-  const matches =
-    comparison === "after"
-      ? isAfter(messageDate, filterValue) || isEqual(messageDate, filterValue) // Start time: message is after or equal to filter
-      : isBefore(messageDate, filterValue) || isEqual(messageDate, filterValue); // End time: message is before or equal to filter
-
-  return _applyInverseLogic(matches, inverseActive);
-};
-
-/**
- * Text extractors for different filter types
- */
-type TextExtractor = (message: Message) => string | string[];
-
-const TextExtractors = {
-  property: (propertyName: keyof Message | string) => (message: Message) => {
-    // Handle special cases where the filter name doesn't directly map to a Message property
-    if (propertyName === "userName") {
-      return message.author?.username || "";
-    }
-
-    // Default: access property directly on message
-    return String(message[propertyName as keyof Message] || "");
-  },
-
-  attachments: (message: Message) =>
-    message.attachments.map((a) => a.filename).join(),
-
-  contentAndEmbeds: (message: Message) => {
-    const texts = [message.content];
-
-    message.embeds?.forEach((embed) => {
-      if (embed.type === "rich") {
-        const embedTexts = [
-          embed.author?.name,
-          embed.author?.url,
-          embed.description,
-          embed.footer?.text,
-          embed.title,
-          embed.url,
-          ...(embed.fields?.map((f) => f.name) || []),
-          ...(embed.fields?.map((f) => f.value) || []),
-        ].filter((text): text is string => typeof text === "string");
-        texts.push(...embedTexts);
-      }
-    });
-
-    return texts.filter(Boolean) as string[];
-  },
-};
-
-/**
- * Helper to check if text contains search values
- */
-const _createTextContainsCheck = (
-  values: string | string[],
-  text: string,
-  caseSensitive = true,
-): boolean => {
-  const searchText = caseSensitive ? text : text.toLowerCase();
-  const searchValues = Array.isArray(values) ? values : [values];
-
-  return searchValues.some((val) => {
-    const searchVal = caseSensitive ? val : val.toLowerCase();
-    return searchText.includes(searchVal);
-  });
-};
-
-/**
- * Unified text content filter
- */
-const _filterByTextContent = (
-  filterValue: string | string[],
-  message: Message,
-  inverseActive: boolean,
-  extractor: TextExtractor,
-  caseSensitive = true,
-): boolean => {
-  const extracted = extractor(message);
-  const textArray = Array.isArray(extracted) ? extracted : [extracted];
-
-  const matches = textArray.some((text) =>
-    _createTextContainsCheck(filterValue, text, caseSensitive),
-  );
-
-  return _applyInverseLogic(matches, inverseActive);
 };
 
 const initialState: MessageState = {
@@ -400,129 +283,6 @@ export const messageSlice = createSlice({
   },
 });
 
-const _filterMessageType = (
-  _filterValue: string[],
-  message: Message,
-  inverseActive: boolean,
-  threads: Channel[],
-): boolean => {
-  const matches = _filterValue.some(
-    (fv) =>
-      messageTypeEquals(message.type, fv as MessageType) ||
-      (fv === MessageCategory.PINNED && message.pinned) ||
-      (fv === MessageCategory.REACTIONS && !!message.reactions?.length) ||
-      (fv === MessageCategory.THREAD &&
-        threads.some((t) => t.id === message.channel_id)) ||
-      (fv === MessageCategory.THREAD_STARTER && message.thread?.id),
-  );
-  return _applyInverseLogic(matches, inverseActive);
-};
-
-const _filterThread = (
-  filterValue: string,
-  message: Message,
-  inverseActive: boolean,
-): boolean => {
-  const matches =
-    message.channel_id === filterValue || message.thread?.id === filterValue;
-  return _applyInverseLogic(matches, inverseActive);
-};
-
-/**
- * Filter handler map for different filter types
- * Eliminates cascading if-else chains by mapping filter types to their handlers
- */
-type FilterHandler = (
-  param: Filter,
-  message: Message,
-  inverseActive: boolean,
-  getState: any,
-) => boolean;
-
-const FilterHandlers: Record<FilterType, FilterHandler> = {
-  [FilterType.TEXT]: (param, message, inverseActive) => {
-    // Type guard: ensure filterValue is a string or string array
-    if (
-      !param.filterValue ||
-      (typeof param.filterValue !== "string" &&
-        !Array.isArray(param.filterValue))
-    ) {
-      return true;
-    }
-
-    if (param.filterName === FilterName.ATTACHMENT_NAME) {
-      return _filterByTextContent(
-        param.filterValue,
-        message,
-        inverseActive,
-        TextExtractors.attachments,
-        false, // Case insensitive
-      );
-    }
-    if (param.filterName === FilterName.CONTENT) {
-      return _filterByTextContent(
-        param.filterValue,
-        message,
-        inverseActive,
-        TextExtractors.contentAndEmbeds,
-      );
-    }
-    // Default text filter for other message properties
-    return _filterByTextContent(
-      param.filterValue,
-      message,
-      inverseActive,
-      TextExtractors.property(param.filterName as keyof Message),
-    );
-  },
-
-  [FilterType.DATE]: (param, message, inverseActive) => {
-    // Type guard: ensure filterValue is a Date
-    if (!param.filterValue || !(param.filterValue instanceof Date)) return true;
-
-    if (param.filterName === FilterName.START_TIME) {
-      return _filterByTimestamp(
-        param.filterValue,
-        message,
-        inverseActive,
-        "after",
-      );
-    }
-    if (param.filterName === FilterName.END_TIME) {
-      return _filterByTimestamp(
-        param.filterValue,
-        message,
-        inverseActive,
-        "before",
-      );
-    }
-    return true;
-  },
-
-  [FilterType.THREAD]: (param, message, inverseActive) => {
-    // Type guard: ensure filterValue is a string
-    if (!param.filterValue || typeof param.filterValue !== "string")
-      return true;
-
-    return _filterThread(param.filterValue, message, inverseActive);
-  },
-
-  [FilterType.ARRAY]: (param, message, inverseActive, getState) => {
-    if (param.filterName === FilterName.MESSAGE_TYPE) {
-      const { threads } = getState().thread;
-      return _filterMessageType(
-        param.filterValue,
-        message,
-        inverseActive,
-        threads,
-      );
-    }
-    return true;
-  },
-
-  [FilterType.TOGGLE]: () => true, // Toggle filters don't filter messages, they just enable/disable features
-};
-
 export const {
   setIsLoading,
   setSearchCriteria,
@@ -539,46 +299,18 @@ export const {
 export const filterMessages =
   (): AppThunk<Promise<void>> => async (dispatch, getState) => {
     const state = getState().message;
-    const inverseActive = state.filters
-      .filter((f) => f.filterName)
-      .some((filter) => filter.filterName === FilterName.INVERSE);
+    const { threads } = getState().thread;
 
-    const hasNoMeaningfulFilters =
-      state.filters.length === 0 ||
-      (state.filters.length === 1 && inverseActive);
+    // Use the pure filterMessages function from discrub-lib
+    const result = discrubFilterMessages({
+      messages: state.messages,
+      filters: state.filters,
+      threads,
+      selectedMessageIds: state.selectedMessages,
+    });
 
-    // Early return if no meaningful filters
-    if (hasNoMeaningfulFilters) {
-      dispatch(setFilteredMessages(state.messages));
-      dispatch(
-        setSelected(
-          state.messages
-            .filter((m) => state.selectedMessages.some((mId) => m.id === mId))
-            .map((m) => m.id),
-        ),
-      );
-      return;
-    }
-
-    // Apply all filters to all messages using FilterHandlers map
-    const filteredMessages = state.messages.filter((message) =>
-      state.filters.every((filter) => {
-        if (!filter.filterValue) return true;
-
-        const handler = FilterHandlers[filter.filterType];
-        if (!handler) return true;
-
-        return handler(filter, message, inverseActive, getState);
-      }),
-    );
-
-    // Update selected messages to only include those in filtered results
-    const selectedInFiltered = filteredMessages
-      .filter((m) => state.selectedMessages.includes(m.id))
-      .map((m) => m.id);
-
-    dispatch(setFilteredMessages(filteredMessages));
-    dispatch(setSelected(selectedInFiltered));
+    dispatch(setFilteredMessages(result.filteredMessages));
+    dispatch(setSelected(result.selectedMessageIds));
   };
 
 /**

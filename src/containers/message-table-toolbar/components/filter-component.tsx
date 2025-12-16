@@ -14,8 +14,8 @@ import {
   FilledInput,
 } from "@mui/material";
 import { sortByProperty } from "discrub-lib/discrub-utils";
-import { Filter } from "../../../features/message/message-types";
 import type { Channel } from "discrub-lib/types/discord-types";
+import type { Filter } from "discrub-lib/types/discrub-types";
 import { MessageCategory, MessageType } from "discrub-lib/discord-enum";
 import { FilterName, FilterType } from "discrub-lib/discrub-enum";
 

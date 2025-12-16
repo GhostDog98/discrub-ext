@@ -15,10 +15,8 @@ import { useDmSlice } from "../../features/dm/use-dm-slice";
 import { useAppSlice } from "../../features/app/use-app-slice";
 import { useMessageSlice } from "../../features/message/use-message-slice";
 import DeleteModal from "./components/delete-modal";
-import {
-  DeleteConfiguration,
-  Filter,
-} from "../../features/message/message-types";
+import { DeleteConfiguration } from "../../features/message/message-types";
+import type { Filter } from "discrub-lib/types/discrub-types";
 import EditModal from "./components/edit-modal";
 import { useThreadSlice } from "../../features/thread/use-thread-slice";
 import ExportButton from "../export-button/export-button";

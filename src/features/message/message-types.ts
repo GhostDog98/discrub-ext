@@ -1,6 +1,5 @@
 import type { Channel, Message } from "discrub-lib/types/discord-types";
-import type { SearchCriteria } from "discrub-lib/types/discrub-types";
-import { FilterName, FilterType } from "discrub-lib/discrub-enum";
+import type { SearchCriteria, Filter } from "discrub-lib/types/discrub-types";
 import { SortDirection } from "discrub-lib/common-enum";
 
 export type MessageState = {
@@ -13,36 +12,6 @@ export type MessageState = {
   orderBy: keyof Message;
   searchCriteria: SearchCriteria;
 };
-
-export type Filter =
-  | {
-      filterName?: undefined;
-      filterValue?: string | null;
-      filterType: FilterType.THREAD;
-    }
-  | {
-      filterValue?: string | string[] | null;
-      filterType: FilterType.TEXT;
-      filterName:
-        | FilterName.ATTACHMENT_NAME
-        | FilterName.CONTENT
-        | keyof Message;
-    }
-  | {
-      filterValue?: Date | null;
-      filterType: FilterType.DATE;
-      filterName: FilterName.END_TIME | FilterName.START_TIME;
-    }
-  | {
-      filterValue: boolean;
-      filterType: FilterType.TOGGLE;
-      filterName: FilterName.INVERSE;
-    }
-  | {
-      filterName: FilterName.MESSAGE_TYPE;
-      filterValue: string[];
-      filterType: FilterType.ARRAY;
-    };
 
 export type DeleteConfiguration = {
   attachments: boolean;
