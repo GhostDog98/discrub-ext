@@ -61,7 +61,7 @@ import {
   setExportUserMap,
 } from "../export/export-slice";
 import { getPreFilterUsers } from "../guild/guild-slice";
-import { isDate, parseISO } from "date-fns";
+import { isDate, parseISO, isAfter, isBefore, isEqual } from "date-fns";
 import {
   DeleteConfiguration,
   Filter,
@@ -127,6 +127,123 @@ const _descendingComparator = <Message>(
   orderBy: keyof Message,
 ) => {
   return b[orderBy] < a[orderBy] ? -1 : b[orderBy] > a[orderBy] ? 1 : 0;
+};
+
+/**
+ * Apply inverse logic to a filter condition
+ * @param matches - Whether the condition matched
+ * @param inverseActive - Whether inverse filtering is enabled
+ * @returns true if message should be included, false otherwise
+ */
+const _applyInverseLogic = (
+  matches: boolean,
+  inverseActive: boolean,
+): boolean => {
+  return inverseActive ? !matches : matches;
+};
+
+type TimeComparison = "before" | "after";
+
+/**
+ * Unified timestamp filter for both start and end time filtering
+ * @param filterValue - The date to compare against
+ * @param message - The message to filter
+ * @param inverseActive - Whether inverse filtering is enabled
+ * @param comparison - Whether to check if message is 'before' or 'after' the filter date
+ */
+const _filterByTimestamp = (
+  filterValue: Date,
+  message: Message,
+  inverseActive: boolean,
+  comparison: TimeComparison,
+): boolean => {
+  const messageDate = parseISO(message.timestamp);
+
+  const matches =
+    comparison === "after"
+      ? isAfter(messageDate, filterValue) || isEqual(messageDate, filterValue) // Start time: message is after or equal to filter
+      : isBefore(messageDate, filterValue) || isEqual(messageDate, filterValue); // End time: message is before or equal to filter
+
+  return _applyInverseLogic(matches, inverseActive);
+};
+
+/**
+ * Text extractors for different filter types
+ */
+type TextExtractor = (message: Message) => string | string[];
+
+const TextExtractors = {
+  property: (propertyName: keyof Message | string) => (message: Message) => {
+    // Handle special cases where the filter name doesn't directly map to a Message property
+    if (propertyName === "userName") {
+      return message.author?.username || "";
+    }
+
+    // Default: access property directly on message
+    return String(message[propertyName as keyof Message] || "");
+  },
+
+  attachments: (message: Message) =>
+    message.attachments.map((a) => a.filename).join(),
+
+  contentAndEmbeds: (message: Message) => {
+    const texts = [message.content];
+
+    message.embeds?.forEach((embed) => {
+      if (embed.type === "rich") {
+        const embedTexts = [
+          embed.author?.name,
+          embed.author?.url,
+          embed.description,
+          embed.footer?.text,
+          embed.title,
+          embed.url,
+          ...(embed.fields?.map((f) => f.name) || []),
+          ...(embed.fields?.map((f) => f.value) || []),
+        ].filter((text): text is string => typeof text === "string");
+        texts.push(...embedTexts);
+      }
+    });
+
+    return texts.filter(Boolean) as string[];
+  },
+};
+
+/**
+ * Helper to check if text contains search values
+ */
+const _createTextContainsCheck = (
+  values: string | string[],
+  text: string,
+  caseSensitive = true,
+): boolean => {
+  const searchText = caseSensitive ? text : text.toLowerCase();
+  const searchValues = Array.isArray(values) ? values : [values];
+
+  return searchValues.some((val) => {
+    const searchVal = caseSensitive ? val : val.toLowerCase();
+    return searchText.includes(searchVal);
+  });
+};
+
+/**
+ * Unified text content filter
+ */
+const _filterByTextContent = (
+  filterValue: string | string[],
+  message: Message,
+  inverseActive: boolean,
+  extractor: TextExtractor,
+  caseSensitive = true,
+): boolean => {
+  const extracted = extractor(message);
+  const textArray = Array.isArray(extracted) ? extracted : [extracted];
+
+  const matches = textArray.some((text) =>
+    _createTextContainsCheck(filterValue, text, caseSensitive),
+  );
+
+  return _applyInverseLogic(matches, inverseActive);
 };
 
 const initialState: MessageState = {
@@ -289,24 +406,16 @@ const _filterMessageType = (
   inverseActive: boolean,
   threads: Channel[],
 ): boolean => {
-  const messageHasType = _filterValue.some((fv) => {
-    return (
+  const matches = _filterValue.some(
+    (fv) =>
       messageTypeEquals(message.type, fv as MessageType) ||
       (fv === MessageCategory.PINNED && message.pinned) ||
       (fv === MessageCategory.REACTIONS && !!message.reactions?.length) ||
       (fv === MessageCategory.THREAD &&
         threads.some((t) => t.id === message.channel_id)) ||
-      (fv === MessageCategory.THREAD_STARTER && message.thread?.id)
-    );
-  });
-  const criteriaMet =
-    (!inverseActive && !messageHasType) || (inverseActive && messageHasType);
-
-  if (criteriaMet) {
-    return false;
-  }
-
-  return true;
+      (fv === MessageCategory.THREAD_STARTER && message.thread?.id),
+  );
+  return _applyInverseLogic(matches, inverseActive);
 };
 
 const _filterThread = (
@@ -314,145 +423,104 @@ const _filterThread = (
   message: Message,
   inverseActive: boolean,
 ): boolean => {
-  const { channel_id, thread } = message;
-  const isFromThread = channel_id === filterValue || thread?.id === filterValue;
-
-  const criteriaMet =
-    (!inverseActive && !isFromThread) || (inverseActive && isFromThread);
-
-  if (criteriaMet) {
-    return false;
-  }
-
-  return true;
+  const matches =
+    message.channel_id === filterValue || message.thread?.id === filterValue;
+  return _applyInverseLogic(matches, inverseActive);
 };
 
-const _filterEndTime = (
-  filterValue: Date,
+/**
+ * Filter handler map for different filter types
+ * Eliminates cascading if-else chains by mapping filter types to their handlers
+ */
+type FilterHandler = (
+  param: Filter,
   message: Message,
   inverseActive: boolean,
-): boolean => {
-  const endTime = filterValue.getTime();
-  const rowTime = Date.parse(message.timestamp);
+  getState: any,
+) => boolean;
 
-  const criteriaMet =
-    (!inverseActive && rowTime > endTime) ||
-    (inverseActive && !(rowTime > endTime));
-
-  if (criteriaMet) {
-    return false;
-  }
-
-  return true;
-};
-
-const _filterStartTime = (
-  filterValue: Date,
-  message: Message,
-  inverseActive: boolean,
-): boolean => {
-  const startTime = filterValue.getTime();
-  const rowTime = Date.parse(message.timestamp);
-
-  const criteriaMet =
-    (!inverseActive && rowTime < startTime) ||
-    (inverseActive && !(rowTime < startTime));
-
-  if (criteriaMet) {
-    return false;
-  }
-
-  return true;
-};
-
-const _filterText = (
-  filterName: keyof Message,
-  filterValue: string | string[],
-  message: Message,
-  inverseActive: boolean,
-): boolean => {
-  const messagePropertyValue = message[filterName];
-  if (typeof messagePropertyValue === "string") {
-    const textContainsValue = Array.isArray(filterValue)
-      ? filterValue.some((fv) => messagePropertyValue.includes(fv))
-      : messagePropertyValue.includes(filterValue);
-    const criteriaMet =
-      (!inverseActive && !textContainsValue) ||
-      (inverseActive && textContainsValue);
-    if (criteriaMet) {
-      return false;
+const FilterHandlers: Record<FilterType, FilterHandler> = {
+  [FilterType.TEXT]: (param, message, inverseActive) => {
+    // Type guard: ensure filterValue is a string or string array
+    if (
+      !param.filterValue ||
+      (typeof param.filterValue !== "string" &&
+        !Array.isArray(param.filterValue))
+    ) {
+      return true;
     }
-  }
-  return true;
-};
 
-const _filterAttachmentName = (
-  filterValue: string | string[],
-  message: Message,
-  inverseActive: boolean,
-) => {
-  const csvAttachments = message.attachments.map((a) => a.filename).join();
-  const attachmentsIncludeValue = Array.isArray(filterValue)
-    ? filterValue.some((fv) =>
-        csvAttachments.toLowerCase().includes(fv.toLowerCase()),
-      )
-    : csvAttachments.toLowerCase().includes(filterValue.toLowerCase());
-
-  const criteriaMet =
-    (inverseActive && attachmentsIncludeValue) ||
-    (!inverseActive && !attachmentsIncludeValue);
-  if (criteriaMet) {
-    return false;
-  }
-  return true;
-};
-
-const _filterMessageContent = (
-  filterValue: string | string[],
-  message: Message,
-  inverseActive: boolean,
-) => {
-  const contentContainsValue = Array.isArray(filterValue)
-    ? filterValue.some((fv) => message.content.includes(fv))
-    : message.content.includes(filterValue);
-  const embedsContainValue =
-    message.embeds &&
-    message.embeds.some((embed) => {
-      const { author, description, fields, footer, title, type, url } = embed;
-      return (
-        type === "rich" &&
-        ([
-          author?.name,
-          author?.url,
-          description,
-          footer?.text,
-          title,
-          url,
-        ].some((prop) =>
-          Array.isArray(filterValue)
-            ? filterValue.some((fv) => prop?.includes(fv))
-            : prop?.includes(filterValue),
-        ) ||
-          fields?.some((field) =>
-            [field.name, field.value].some((fieldProp) =>
-              Array.isArray(filterValue)
-                ? filterValue.some((fv) => fieldProp?.includes(fv))
-                : fieldProp?.includes(filterValue),
-            ),
-          ))
+    if (param.filterName === FilterName.ATTACHMENT_NAME) {
+      return _filterByTextContent(
+        param.filterValue,
+        message,
+        inverseActive,
+        TextExtractors.attachments,
+        false, // Case insensitive
       );
-    });
+    }
+    if (param.filterName === FilterName.CONTENT) {
+      return _filterByTextContent(
+        param.filterValue,
+        message,
+        inverseActive,
+        TextExtractors.contentAndEmbeds,
+      );
+    }
+    // Default text filter for other message properties
+    return _filterByTextContent(
+      param.filterValue,
+      message,
+      inverseActive,
+      TextExtractors.property(param.filterName as keyof Message),
+    );
+  },
 
-  const appliesToMessage = contentContainsValue || embedsContainValue;
+  [FilterType.DATE]: (param, message, inverseActive) => {
+    // Type guard: ensure filterValue is a Date
+    if (!param.filterValue || !(param.filterValue instanceof Date)) return true;
 
-  const criteraMet =
-    (!inverseActive && !appliesToMessage) ||
-    (inverseActive && appliesToMessage);
+    if (param.filterName === FilterName.START_TIME) {
+      return _filterByTimestamp(
+        param.filterValue,
+        message,
+        inverseActive,
+        "after",
+      );
+    }
+    if (param.filterName === FilterName.END_TIME) {
+      return _filterByTimestamp(
+        param.filterValue,
+        message,
+        inverseActive,
+        "before",
+      );
+    }
+    return true;
+  },
 
-  if (criteraMet) {
-    return false;
-  }
-  return true;
+  [FilterType.THREAD]: (param, message, inverseActive) => {
+    // Type guard: ensure filterValue is a string
+    if (!param.filterValue || typeof param.filterValue !== "string")
+      return true;
+
+    return _filterThread(param.filterValue, message, inverseActive);
+  },
+
+  [FilterType.ARRAY]: (param, message, inverseActive, getState) => {
+    if (param.filterName === FilterName.MESSAGE_TYPE) {
+      const { threads } = getState().thread;
+      return _filterMessageType(
+        param.filterValue,
+        message,
+        inverseActive,
+        threads,
+      );
+    }
+    return true;
+  },
+
+  [FilterType.TOGGLE]: () => true, // Toggle filters don't filter messages, they just enable/disable features
 };
 
 export const {
@@ -471,82 +539,46 @@ export const {
 export const filterMessages =
   (): AppThunk<Promise<void>> => async (dispatch, getState) => {
     const state = getState().message;
-    let retArr: Message[] = [];
     const inverseActive = state.filters
       .filter((f) => f.filterName)
       .some((filter) => filter.filterName === FilterName.INVERSE);
-    const activeFilterCount = state.filters.length;
 
-    if ((activeFilterCount === 1 && inverseActive) || activeFilterCount === 0) {
-      retArr = state.messages;
-    } else {
-      state.messages.forEach((x) => {
-        let criteriaMet = true;
-        state.filters.forEach((param) => {
-          if (criteriaMet && param.filterValue) {
-            if (param.filterType === FilterType.TEXT) {
-              if (param.filterName === FilterName.ATTACHMENT_NAME) {
-                criteriaMet = _filterAttachmentName(
-                  param.filterValue,
-                  x,
-                  inverseActive,
-                );
-              } else if (param.filterName === FilterName.CONTENT) {
-                criteriaMet = _filterMessageContent(
-                  param.filterValue,
-                  x,
-                  inverseActive,
-                );
-              } else {
-                criteriaMet = _filterText(
-                  param.filterName,
-                  param.filterValue,
-                  x,
-                  inverseActive,
-                );
-              }
-              return criteriaMet;
-            } else if (param.filterType === FilterType.DATE) {
-              if (param.filterName === FilterName.START_TIME) {
-                criteriaMet = _filterStartTime(
-                  param.filterValue,
-                  x,
-                  inverseActive,
-                );
-              } else if (param.filterName === FilterName.END_TIME) {
-                criteriaMet = _filterEndTime(
-                  param.filterValue,
-                  x,
-                  inverseActive,
-                );
-              }
-            } else if (param.filterType === FilterType.THREAD) {
-              criteriaMet = _filterThread(param.filterValue, x, inverseActive);
-            } else if (param.filterType === FilterType.ARRAY) {
-              if (param.filterName === FilterName.MESSAGE_TYPE) {
-                const { threads } = getState().thread;
-                criteriaMet = _filterMessageType(
-                  param.filterValue,
-                  x,
-                  inverseActive,
-                  threads,
-                );
-              }
-            }
-          }
-        });
-        if (criteriaMet) retArr.push(x);
-      });
+    const hasNoMeaningfulFilters =
+      state.filters.length === 0 ||
+      (state.filters.length === 1 && inverseActive);
+
+    // Early return if no meaningful filters
+    if (hasNoMeaningfulFilters) {
+      dispatch(setFilteredMessages(state.messages));
+      dispatch(
+        setSelected(
+          state.messages
+            .filter((m) => state.selectedMessages.some((mId) => m.id === mId))
+            .map((m) => m.id),
+        ),
+      );
+      return;
     }
 
-    dispatch(setFilteredMessages(retArr));
-    dispatch(
-      setSelected(
-        retArr
-          .filter((m) => state.selectedMessages.some((mId) => m.id === mId))
-          .map((m) => m.id),
-      ),
+    // Apply all filters to all messages using FilterHandlers map
+    const filteredMessages = state.messages.filter((message) =>
+      state.filters.every((filter) => {
+        if (!filter.filterValue) return true;
+
+        const handler = FilterHandlers[filter.filterType];
+        if (!handler) return true;
+
+        return handler(filter, message, inverseActive, getState);
+      }),
     );
+
+    // Update selected messages to only include those in filtered results
+    const selectedInFiltered = filteredMessages
+      .filter((m) => state.selectedMessages.includes(m.id))
+      .map((m) => m.id);
+
+    dispatch(setFilteredMessages(filteredMessages));
+    dispatch(setSelected(selectedInFiltered));
   };
 
 /**
@@ -1331,7 +1363,9 @@ const _enrichAllUserData =
 
       // Fetch display name if needed
       if (needsDisplayName) {
-        dispatch(setStatus(StatusMessages.retrievingUserAlias(userName || userId)));
+        dispatch(
+          setStatus(StatusMessages.retrievingUserAlias(userName || userId)),
+        );
         const { success, data } = await new DiscordService(settings).getUser(
           token,
           userId,
@@ -1406,7 +1440,9 @@ const _resolveMessageReactions =
 
         if (!trackMap[message.id]) {
           dispatch(
-            setStatus(StatusMessages.searchingReactions(i + 1, messages.length)),
+            setStatus(
+              StatusMessages.searchingReactions(i + 1, messages.length),
+            ),
           );
           const { success, data } = await new DiscordService(
             settings,
@@ -1454,7 +1490,8 @@ const _getNextSearchData = (
   const nextOffSet = offset + OFFSET_INCREMENT;
 
   // Check completion conditions
-  const reachedEndOffset = !!endOffSet && isSearchComplete(nextOffSet, endOffSet);
+  const reachedEndOffset =
+    !!endOffSet && isSearchComplete(nextOffSet, endOffSet);
   const reachedAllResults = isSearchComplete(nextOffSet, totalMessages);
   const shouldStop = isEndConditionMet || reachedEndOffset || reachedAllResults;
 
@@ -1487,7 +1524,10 @@ const _getNextSearchStatus = (
   if (isGuildForum(channel)) {
     return StatusMessages.retrievedThreads(threads.length);
   } else {
-    return StatusMessages.retrievedSearchResults(messages.length, totalMessages);
+    return StatusMessages.retrievedSearchResults(
+      messages.length,
+      totalMessages,
+    );
   }
 };
 
@@ -1667,7 +1707,9 @@ const _getMessages =
         for (const thread of trackedThreads) {
           dispatch(
             setStatus(
-              StatusMessages.retrievingThreadMessages(getThreadEntityName(thread)),
+              StatusMessages.retrievingThreadMessages(
+                getThreadEntityName(thread),
+              ),
             ),
           );
           messages = [
@@ -1702,8 +1744,7 @@ const _getMessagesFromChannel =
           ),
         (batch) => {
           // Only update status if batch has valid messages
-          const hasValidMessages =
-            batch[0]?.content || batch[0]?.attachments;
+          const hasValidMessages = batch[0]?.content || batch[0]?.attachments;
           if (hasValidMessages) {
             messageCount += batch.length;
             dispatch(setStatus(StatusMessages.retrievedMessages(messageCount)));
