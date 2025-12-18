@@ -36,7 +36,6 @@ import {
   ReactionType,
 } from "discrub-lib/discord-enum";
 import { SortDirection } from "discrub-lib/common-enum";
-import { FilterType } from "discrub-lib/discrub-enum";
 import { MessageRegex } from "discrub-lib/regex";
 import {
   getArchivedThreads,
@@ -61,8 +60,11 @@ import {
   setExportUserMap,
 } from "../export/export-slice";
 import { getPreFilterUsers } from "../guild/guild-slice";
-import { isDate, parseISO } from "date-fns";
-import { filterMessages as discrubFilterMessages } from "discrub-lib/filtering";
+import { parseISO } from "date-fns";
+import {
+  filterMessages as discrubFilterMessages,
+  updateFilters as discrubUpdateFilters,
+} from "discrub-lib/filtering";
 import {
   DeleteConfiguration,
   MessageData,
@@ -204,81 +206,8 @@ export const messageSlice = createSlice({
       state.searchCriteria = initialState.searchCriteria;
     },
     updateFilters: (state, { payload }: { payload: Filter }): void => {
-      const { filterName, filterValue, filterType } = payload;
-      const filteredList = state.filters.filter(
-        (x) => x.filterName !== filterName,
-      );
-      let retFilters: Filter[] = [];
-      if (filterType === FilterType.TEXT) {
-        if (Number(filterValue?.length) > 0)
-          retFilters = [
-            ...filteredList,
-            {
-              filterName: filterName,
-              filterValue: filterValue,
-              filterType: filterType,
-            },
-          ];
-        else retFilters = [...filteredList];
-      } else if (filterType === FilterType.DATE) {
-        if (isDate(filterValue) && filterValue.getTime()) {
-          retFilters = [
-            ...filteredList,
-            {
-              filterName: filterName,
-              filterValue: filterValue,
-              filterType: filterType,
-            },
-          ];
-        } else retFilters = [...filteredList];
-      } else if (filterType === FilterType.THREAD) {
-        if (Number(filterValue?.length) > 0)
-          retFilters = [
-            ...filteredList.filter((f) => f.filterType !== filterType),
-            {
-              filterValue: filterValue,
-              filterType: filterType,
-            },
-          ];
-        else
-          retFilters = [
-            ...filteredList.filter((f) => f.filterType !== filterType),
-          ];
-      } else if (filterType === FilterType.TOGGLE) {
-        if (filterValue) {
-          // Add the toggle to filters
-          retFilters = [
-            ...filteredList,
-            {
-              filterName: filterName,
-              filterValue: filterValue,
-              filterType: filterType,
-            },
-          ];
-        } else {
-          // Remove the toggle from filters
-          retFilters = filteredList.filter(
-            (filter) => filter.filterName !== filterName,
-          );
-        }
-      } else if (filterType === FilterType.ARRAY) {
-        if (filterValue.length) {
-          retFilters = [
-            ...filteredList.filter((f) => f.filterName !== filterName),
-            {
-              filterName: filterName,
-              filterValue: filterValue,
-              filterType: filterType,
-            },
-          ];
-        } else {
-          // Remove filter from list
-          retFilters = [
-            ...filteredList.filter((f) => f.filterName !== filterName),
-          ];
-        }
-      }
-      state.filters = retFilters;
+      // Use the pure updateFilters function from discrub-lib
+      state.filters = discrubUpdateFilters(state.filters, payload);
     },
   },
 });
