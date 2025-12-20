@@ -13,6 +13,7 @@ import {
   isSearchComplete,
   isUserDataStale,
   messageTypeEquals,
+  sortBy,
   stringToBool,
 } from "discrub-lib/discrub-utils";
 import type {
@@ -123,14 +124,6 @@ const StatusMessages = {
     `Retrieving server data for ${userName}`,
 } as const;
 
-const _descendingComparator = <Message>(
-  a: Message,
-  b: Message,
-  orderBy: keyof Message,
-) => {
-  return b[orderBy] < a[orderBy] ? -1 : b[orderBy] > a[orderBy] ? 1 : 0;
-};
-
 const initialState: MessageState = {
   messages: [],
   selectedMessages: [],
@@ -176,16 +169,8 @@ export const messageSlice = createSlice({
       const { order, orderBy } = payload;
       state.order = order;
       state.orderBy = orderBy;
-      state.messages = state.messages.sort(
-        payload.order === SortDirection.DESCENDING
-          ? (a, b) => _descendingComparator(a, b, orderBy)
-          : (a, b) => -_descendingComparator(a, b, orderBy),
-      );
-      state.filteredMessages = state.filteredMessages.sort(
-        payload.order === SortDirection.DESCENDING
-          ? (a, b) => _descendingComparator(a, b, orderBy)
-          : (a, b) => -_descendingComparator(a, b, orderBy),
-      );
+      state.messages = sortBy(state.messages, orderBy, order);
+      state.filteredMessages = sortBy(state.filteredMessages, orderBy, order);
     },
     setMessages: (state, { payload }: { payload: Message[] }): void => {
       state.messages = payload;
