@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import { DateTimePicker, Tooltip } from "discrub-lib/common";
+import { DateTimePicker, Tooltip } from "discrub-ui-components";
 import { useMessageSlice } from "../features/message/use-message-slice";
 
 type FieldProps = {

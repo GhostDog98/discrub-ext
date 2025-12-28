@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import { IconButton, TextField } from "@mui/material";
-import { Tooltip } from "discrub-lib/common";
+import { Tooltip } from "discrub-ui-components";
 import CloseIcon from "@mui/icons-material/Close";
 import { useMessageSlice } from "../../../features/message/use-message-slice";
 

@@ -1,5 +1,5 @@
 import { IconButton, Stack, Typography } from "@mui/material";
-import { Tooltip } from "discrub-lib/common";
+import { Tooltip } from "discrub-ui-components";
 import PlaylistAddCheckIcon from "@mui/icons-material/PlaylistAddCheck";
 import PlaylistRemoveIcon from "@mui/icons-material/PlaylistRemove";
 

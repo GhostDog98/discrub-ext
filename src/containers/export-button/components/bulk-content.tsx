@@ -16,7 +16,7 @@ import SearchCriteria, {
   defaultCriteria,
   SearchCriteriaComponentType,
 } from "../../search-criteria/search-criteria.tsx";
-import { EnhancedAutocomplete, Tooltip } from "discrub-lib/common";
+import { EnhancedAutocomplete, Tooltip } from "discrub-ui-components";
 import {
   filterBoth,
   getEntityHint,

@@ -1,5 +1,5 @@
 import { useMessageSlice } from "../../../features/message/use-message-slice";
-import { EnhancedAutocomplete, Tooltip } from "discrub-lib/common";
+import { EnhancedAutocomplete, Tooltip } from "discrub-ui-components";
 import { IsPinnedType } from "discrub-lib/discord-enum";
 import Box from "@mui/material/Box";
 

@@ -1,4 +1,4 @@
-import { EnhancedAutocomplete, Tooltip } from "discrub-lib/common";
+import { EnhancedAutocomplete, Tooltip } from "discrub-ui-components";
 import { useMessageSlice } from "../../../features/message/use-message-slice";
 import { HasType as HasTypeEnum } from "discrub-lib/discord-enum";
 

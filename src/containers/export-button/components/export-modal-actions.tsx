@@ -4,7 +4,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import PauseButton from "../../../components/pause-button";
 import CancelButton from "../../../components/cancel-button";
 import { ExportType } from "discrub-lib/discrub-enum";
-import { Tooltip } from "discrub-lib/common";
+import { Tooltip } from "discrub-ui-components";
 
 type ActionsProps = {
   handleExportSelected: (val: ExportType) => void;

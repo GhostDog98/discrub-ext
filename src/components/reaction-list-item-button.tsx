@@ -17,7 +17,7 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import { resolveAvatarUrl, resolveEmojiUrl } from "discrub-lib/discrub-utils";
 import copy from "copy-to-clipboard";
-import { Tooltip } from "discrub-lib/common";
+import { Tooltip } from "discrub-ui-components";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
 import ServerEmoji from "./server-emoji";

@@ -22,8 +22,8 @@ import {
 } from "discrub-lib/discrub-utils";
 import PauseButton from "../../components/pause-button";
 import CancelButton from "../../components/cancel-button";
-import { Tooltip, Table } from "discrub-lib/common";
-import type { OrderProps, TableColumn, TableRow } from "discrub-lib/common";
+import { Tooltip, Table } from "discrub-ui-components";
+import type { OrderProps, TableColumn, TableRow } from "discrub-ui-components";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import { useUserSlice } from "../../features/user/use-user-slice";
@@ -41,7 +41,7 @@ import ReactionModal from "../../components/reaction-modal";
 import SearchCriteria, {
   SearchCriteriaComponentType,
 } from "../search-criteria/search-criteria.tsx";
-import { EnhancedAutocomplete } from "discrub-lib/common";
+import { EnhancedAutocomplete } from "discrub-ui-components";
 import { EntityHint } from "discrub-lib/discrub-enum";
 import AppStatus from "../app-status/app-status.tsx";
 

@@ -18,7 +18,7 @@ import {
 import { AppTask } from "../features/app/app-types";
 import type { Attachment } from "discrub-lib/types/discord-types";
 import { isMessage } from "discrub-lib/discrub-guards";
-import { Tooltip } from "discrub-lib/common";
+import { Tooltip } from "discrub-ui-components";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { entityIsImage } from "discrub-lib/discrub-utils";
 import {

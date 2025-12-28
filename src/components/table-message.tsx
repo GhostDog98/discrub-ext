@@ -1,6 +1,6 @@
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
-import { Tooltip } from "discrub-lib/common";
+import { Tooltip } from "discrub-ui-components";
 import AttachmentIcon from "@mui/icons-material/Attachment";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import MessageMock from "../containers/message-mock/message-mock";

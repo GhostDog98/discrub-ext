@@ -26,7 +26,7 @@ import { isNonNullable } from "discrub-lib/common-guards";
 import { DeleteConfiguration } from "../../../features/message/message-types";
 import { AppTask } from "../../../features/app/app-types";
 import MessageMock from "../../message-mock/message-mock";
-import { EnhancedAutocomplete } from "discrub-lib/common";
+import { EnhancedAutocomplete } from "discrub-ui-components";
 import type {
   ExportReactionMap,
   ExportUserMap,

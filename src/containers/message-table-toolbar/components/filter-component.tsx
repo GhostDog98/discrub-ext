@@ -5,7 +5,7 @@ import {
   EnhancedAutocomplete,
   Tooltip,
   MultiValueSelect,
-} from "discrub-lib/common";
+} from "discrub-ui-components";
 import {
   FormControl,
   InputLabel,

@@ -1,6 +1,6 @@
 import { FormControl, Stack, SxProps, TextField, Theme } from "@mui/material";
 import { setSetting } from "../../../services/chrome-service";
-import { EnhancedAutocomplete, Tooltip } from "discrub-lib/common";
+import { EnhancedAutocomplete, Tooltip } from "discrub-ui-components";
 import { SortDirection } from "discrub-lib/common-enum";
 import FormatListNumberedRtlIcon from "@mui/icons-material/FormatListNumberedRtl";
 import { defaultSettings } from "../../../features/app/app-slice.ts";
