@@ -94,7 +94,8 @@ export const loadChannel =
     const { token } = getState().user;
     const { channels } = getState().channel;
 
-    if (token && channelId && !channels.map((c) => c.id).includes(channelId)) {
+    const channelExists = channels.some((c) => c.id === channelId);
+    if (token && channelId && !channelExists) {
       const { data, success } = await new DiscordService(settings).fetchChannel(
         token,
         channelId,

@@ -13,7 +13,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useUserSlice } from "../features/user/use-user-slice";
 
 function TokenNotFound() {
-  const { state: userState, getUserDataManaully } = useUserSlice();
+  const { state: userState, getUserDataManually } = useUserSlice();
   const isLoading = userState.isLoading();
 
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null | undefined>(null);
@@ -22,7 +22,7 @@ function TokenNotFound() {
   const [authFailed, setAuthFailed] = useState(false);
 
   const handleSubmitToken = async () => {
-    const successful = await getUserDataManaully(token);
+    const successful = await getUserDataManually(token);
     if (!successful) setAuthFailed(true);
   };
 

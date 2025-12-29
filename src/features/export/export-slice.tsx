@@ -18,11 +18,11 @@ import {
   stringToBool,
   stringToTypedArray,
   getThreadEntityName,
-  filterThreadsByMessages,
   getPercent,
   getFsUUID,
 } from "discrub-lib/discrub-utils";
-import { wait } from "discrub-lib/common-utils";
+import { wait, MapUtils } from "discrub-lib/common-utils";
+import { ExportDataService } from "discrub-lib/export-data-service";
 import { resetChannel, setChannel } from "../channel/channel-slice";
 import {
   isAppStopped,
@@ -31,7 +31,8 @@ import {
   setStatus,
 } from "../app/app-slice";
 import { renderToString } from "react-dom/server";
-import { MessageRegex } from "discrub-lib/regex";
+import { parseSpecialFormatting } from "discrub-lib/message-formatting-utils";
+import { replaceUserMentionsWithUsernames } from "discrub-lib/export-utils";
 import type {
   ExportAvatarMap,
   ExportEmojiMap,
@@ -134,27 +135,8 @@ export const exportSlice = createSlice({
     resetExportMaps: (state, { payload }: { payload: string[] }): void => {
       if (payload.length) {
         payload.forEach((mapName) => {
-          switch (mapName) {
-            case "userMap":
-              state.exportMaps.userMap = initialMaps.userMap;
-              break;
-            case "emojiMap":
-              state.exportMaps.emojiMap = initialMaps.emojiMap;
-              break;
-            case "avatarMap":
-              state.exportMaps.avatarMap = initialMaps.avatarMap;
-              break;
-            case "mediaMap":
-              state.exportMaps.mediaMap = initialMaps.mediaMap;
-              break;
-            case "roleMap":
-              state.exportMaps.roleMap = initialMaps.roleMap;
-              break;
-            case "reactionMap":
-              state.exportMaps.reactionMap = initialMaps.reactionMap;
-              break;
-            default:
-              break;
+          if (mapName in initialMaps) {
+            (state.exportMaps as any)[mapName] = (initialMaps as any)[mapName];
           }
         });
       } else {
@@ -292,10 +274,11 @@ const _downloadFilesFromMessage =
                 lastModified: parseISO(message.timestamp),
               });
 
-              const updatedMediaMap = {
-                ...map,
-                [downloadUrl]: `${mediaPath.slice(mediaPath.indexOf("/") + 1)}/${fileName}`,
-              };
+              const updatedMediaMap = MapUtils.set(
+                map,
+                downloadUrl,
+                `${mediaPath.slice(mediaPath.indexOf("/") + 1)}/${fileName}`,
+              );
               dispatch(setExportMediaMap(updatedMediaMap));
             }
           }
@@ -324,10 +307,9 @@ const _downloadRoles =
           const roleFilePath = `roles/${fileName}.${fileExt}`;
           await exportUtils.addToZip(data, roleFilePath);
           dispatch(
-            setExportRoleMap({
-              ...exportMaps.roleMap,
-              [iconUrl]: roleFilePath,
-            }),
+            setExportRoleMap(
+              MapUtils.set(exportMaps.roleMap, iconUrl, roleFilePath),
+            ),
           );
         }
       }
@@ -382,10 +364,9 @@ const _downloadAvatarFromMessage =
           await exportUtils.addToZip(data, avatarFilePath);
 
           dispatch(
-            setExportAvatarMap({
-              ...avatarMap,
-              [idAndAvatar]: avatarFilePath,
-            }),
+            setExportAvatarMap(
+              MapUtils.set(avatarMap, idAndAvatar, avatarFilePath),
+            ),
           );
         }
       }
@@ -393,7 +374,7 @@ const _downloadAvatarFromMessage =
   };
 
 /**
- *
+ * Parses Discord special formatting from message content
  * @param {String} content String content to parse Discord special formatting
  * @returns An Object of special formatting
  */
@@ -404,88 +385,7 @@ export const getSpecialFormatting =
     const { selectedGuild } = getState().guild;
     const guildRoles = selectedGuild?.roles || [];
 
-    return {
-      userMention: Array.from(content.matchAll(MessageRegex.USER_MENTION))?.map(
-        ({ 0: userMentionRef, groups: userMentionGroups }) => {
-          const userId = userMentionGroups?.user_id || "";
-          const foundRole = guildRoles.find((role) => role.id === userId);
-          const { userName, displayName } = userMap[userId] || {};
-
-          return {
-            raw: userMentionRef,
-            userName: foundRole?.name || displayName || userName || "Not Found",
-            id: userId,
-          };
-        },
-      ),
-      channel: Array.from(content.matchAll(MessageRegex.CHANNEL_MENTION))?.map(
-        ({ 0: channelRef, groups: channelGroups }) => {
-          return { channelId: channelGroups?.channel_id, raw: channelRef };
-        },
-      ),
-      underLine: Array.from(content.matchAll(MessageRegex.UNDER_LINE))?.map(
-        ({ 0: underLineRef, groups: underLineGroups }) => {
-          return {
-            text: underLineGroups?.text?.replaceAll("__", "") || "",
-            raw: underLineRef,
-          };
-        },
-      ),
-      code: Array.from(content.matchAll(MessageRegex.CODE))?.map(
-        ({ 0: codeRef, groups: codeGroups }) => {
-          return {
-            text: codeGroups?.text?.replaceAll("```", "") || "",
-            raw: codeRef,
-          };
-        },
-      ),
-      italics: Array.from(content.matchAll(MessageRegex.ITALICS))?.map(
-        ({ 0: italicRef, groups: italicGroups }) => {
-          return {
-            text: italicGroups?.text?.replaceAll("_", "") || "",
-            raw: italicRef,
-          };
-        },
-      ),
-      bold: Array.from(content.matchAll(MessageRegex.BOLD))?.map(
-        ({ 0: boldRef, groups: boldGroups }) => {
-          return {
-            text: boldGroups?.text?.replaceAll("**", "") || "",
-            raw: boldRef,
-          };
-        },
-      ),
-      link: Array.from(content.matchAll(MessageRegex.LINK))?.map(
-        ({ 0: linkRef, groups: linkGroups }) => {
-          const rawUrl = linkGroups?.url || null;
-          const rawText = linkGroups?.name || null;
-          const rawDescription = linkGroups?.description?.trim() || null;
-          return {
-            url: rawUrl ? rawUrl.slice(1) : "",
-            text: rawText ? rawText?.slice(1, rawText.length - 1) : "",
-            description: rawDescription
-              ? rawDescription?.slice(1, rawDescription.length - 2)
-              : "",
-            raw: `${linkRef}${rawDescription ? "" : ")"}`,
-          };
-        },
-      ),
-      quote:
-        content.match(MessageRegex.QUOTE)?.map((quoteRef) => ({
-          text: quoteRef?.split("`")[1],
-          raw: quoteRef,
-        })) || [],
-      hyperLink:
-        content.match(MessageRegex.HYPER_LINK)?.map((hyperLinkRef) => ({
-          raw: hyperLinkRef?.trim(),
-        })) || [],
-      emoji:
-        content.match(MessageRegex.EMOJI)?.map((emojiRef) => ({
-          raw: emojiRef,
-          name: `:${emojiRef.split(":")[1]}:`,
-          id: emojiRef.split(":")[2].replace(">", ""),
-        })) || [],
-    };
+    return parseSpecialFormatting(content, { userMap, guildRoles });
   };
 
 const _getEmoji =
@@ -791,10 +691,9 @@ const _downloadEmojisFromMessage =
             await exportUtils.addToZip(data, emojiFilePath);
 
             dispatch(
-              setExportEmojiMap({
-                ...exportMaps.emojiMap,
-                [id]: emojiFilePath,
-              }),
+              setExportEmojiMap(
+                MapUtils.set(exportMaps.emojiMap, id, emojiFilePath),
+              ),
             );
           }
         }
@@ -861,26 +760,22 @@ const _exportJson =
     messages,
     filePath,
   }: ExportJsonProps): AppThunk<Promise<void>> =>
-  async (dispatch, getState) => {
+  async (_, getState) => {
     const { userMap } = getState().export.exportMaps;
+    const { selectedGuild } = getState().guild;
+    const guildRoles = selectedGuild?.roles || [];
 
     await exportUtils.addToZip(
       new Blob(
         [
           JSON.stringify(
             messages.map((message) => {
-              let { content } = message;
               // We are currently only parsing User mentions, using username, in JSON exports.
-              const { userMention } = dispatch(getSpecialFormatting(content));
-              if (userMention.length) {
-                userMention.forEach((userMentionRef) => {
-                  const { userName } = userMap[userMentionRef.id] || {};
-                  content = content.replaceAll(
-                    userMentionRef.raw,
-                    `@${userName}`,
-                  );
-                });
-              }
+              const content = replaceUserMentionsWithUsernames(
+                message.content,
+                userMap,
+                guildRoles,
+              );
               return { ...message, content };
             }),
           ),
@@ -930,96 +825,109 @@ const _compressMessages =
     const { exportSeparateThreadAndForumPosts, exportMessagesPerPage } =
       getState().app.settings;
     const messagesPerPage = parseInt(exportMessagesPerPage);
-    const folderingThreads = stringToBool(exportSeparateThreadAndForumPosts);
+    const separateThreads = stringToBool(exportSeparateThreadAndForumPosts);
 
-    const threads = filterThreadsByMessages(
-      getState().thread.threads,
+    // Use ExportDataService to prepare export structure
+    const exportData = ExportDataService.prepareExportData({
       messages,
-    );
+      messagesPerPage,
+      entityName,
+      entityMainDirectory,
+      format,
+      threads: getState().thread.threads,
+      separateThreads: separateThreads && !threadData,
+    });
 
-    let adjustedMessages: Message[] = messages;
+    // Helper function to export a single page
+    const exportPage = async (
+      pageMessages: Message[],
+      filePath: string,
+      pageNumber: number,
+      totalPagesInContext: number,
+      currentThread?: Channel,
+    ) => {
+      if (await dispatch(isAppStopped())) return false;
 
-    if (folderingThreads && !threadData) {
-      adjustedMessages = messages.filter(
-        (m) => !m.thread && !threads.some((t) => t.id === m.channel_id),
-      );
-      for (let [i, t] of threads.entries()) {
-        const threadNumber = i + 1;
-        const threadMessages = messages.filter(
-          (m) => m.thread?.id === t.id || m.channel_id === t.id,
+      // Set page numbers relative to the current export context
+      dispatch(setCurrentPage(pageNumber));
+      dispatch(setTotalPages(totalPagesInContext));
+
+      if (currentThread) {
+        dispatch(setExportData({ currentThread }));
+      } else {
+        const { exportData: currentExportData } = getState().export;
+        dispatch(setExportData({ ...currentExportData, currentThread: undefined }));
+      }
+
+      if (format !== ExportType.MEDIA) {
+        dispatch(setStatus(`Archiving - ${filePath}`));
+      }
+
+      dispatch(setExportMessages(pageMessages));
+
+      if (format === ExportType.JSON) {
+        await dispatch(
+          _exportJson({
+            exportUtils,
+            messages: pageMessages,
+            filePath,
+          }),
         );
-        if (threadMessages.length) {
-          await dispatch(
-            _compressMessages({
-              messages: threadMessages,
-              format,
-              entityName: getThreadEntityName(t),
-              entityMainDirectory,
-              exportUtils,
-              threadData: {
-                thread: t,
-                threadCount: threads.length,
-                threadNo: threadNumber,
-              },
-            }),
-          );
+      } else if (format === ExportType.HTML) {
+        await _exportHtml({
+          exportUtils,
+          messages: pageMessages,
+          filePath,
+        });
+      } else if (format === ExportType.CSV) {
+        await _exportCsv({
+          exportUtils,
+          messages: pageMessages,
+          filePath,
+        });
+      }
+
+      return true;
+    };
+
+    let shouldStop = false;
+
+    // Process thread exports
+    for (const threadExport of exportData.threadExports) {
+      if (shouldStop) break;
+
+      for (const page of threadExport.pages) {
+        const shouldContinue = await exportPage(
+          page.messages,
+          page.filePath,
+          page.pageNumber,
+          threadExport.pages.length,
+          threadExport.thread,
+        );
+
+        if (!shouldContinue) {
+          shouldStop = true;
+          break;
         }
+      }
+
+      if (await dispatch(isAppStopped())) {
+        shouldStop = true;
+        break;
       }
     }
 
-    if (adjustedMessages.length) {
-      const totalPages =
-        adjustedMessages.length > messagesPerPage
-          ? Math.ceil(adjustedMessages.length / messagesPerPage)
-          : 1;
-      dispatch(setTotalPages(totalPages));
-
-      if (threadData?.thread) {
-        dispatch(setExportData({ currentThread: threadData.thread }));
-      } else {
-        const { exportData } = getState().export;
-        dispatch(setExportData({ ...exportData, currentThread: undefined }));
-      }
-
-      while (getState().export.currentPage <= totalPages) {
-        const currentPage = getState().export.currentPage;
-        const filePath = `${entityMainDirectory}/${getOsSafeString(entityName)}_page_${currentPage}.${format}`;
-        if (await dispatch(isAppStopped())) break;
-        if (format !== ExportType.MEDIA) {
-          dispatch(setStatus(`Archiving - ${filePath}`));
-        }
-
-        const startIndex =
-          currentPage === 1 ? 0 : (currentPage - 1) * messagesPerPage;
-        const exportMessages = adjustedMessages?.slice(
-          startIndex,
-          startIndex + messagesPerPage,
+    // Process main pages
+    if (!shouldStop && !(await dispatch(isAppStopped()))) {
+      for (const page of exportData.mainPages) {
+        const shouldContinue = await exportPage(
+          page.messages,
+          page.filePath,
+          page.pageNumber,
+          exportData.mainPages.length,
         );
 
-        dispatch(setExportMessages(exportMessages));
-
-        if (format === ExportType.JSON) {
-          await dispatch(
-            _exportJson({
-              exportUtils,
-              messages: exportMessages,
-              filePath,
-            }),
-          );
-        } else if (format === ExportType.HTML) {
-          await _exportHtml({
-            exportUtils,
-            messages: exportMessages,
-            filePath,
-          });
-        } else if (format === ExportType.CSV) {
-          await _exportCsv({
-            exportUtils,
-            messages: exportMessages,
-            filePath,
-          });
-        }
-        dispatch(setCurrentPage(currentPage + 1));
+        if (!shouldContinue) break;
       }
     }
 

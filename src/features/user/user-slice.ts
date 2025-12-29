@@ -11,6 +11,7 @@ import {
   getGMOMappingData,
   getUserMappingData,
 } from "discrub-lib/discrub-utils";
+import { MapUtils } from "discrub-lib/common-utils";
 
 const initialState: UserState = {
   currentUser: null,
@@ -54,7 +55,7 @@ export const getUserData = (): AppThunk => async (dispatch, getState) => {
   return sendChromeMessage("GET_TOKEN", chromeCallback);
 };
 
-export const getUserDataManaully =
+export const getUserDataManually =
   (userToken: string): AppThunk<Promise<boolean>> =>
   async (dispatch, getState) => {
     const { settings } = getState().app;
@@ -81,8 +82,7 @@ export const clearUserMapping =
   (dispatch, getState) => {
     // Remove specified User from map
     const { userMap } = getState().export.exportMaps;
-    const newUserMap = { ...userMap };
-    delete newUserMap[userId];
+    const newUserMap = MapUtils.remove(userMap, userId);
     dispatch(setExportUserMap(newUserMap));
 
     // Refresh Guild Users
@@ -98,36 +98,39 @@ export const createUserMapping =
     const { token } = getState().user;
     if (!token) return;
 
-    const { userMap } = getState().export.exportMaps;
-    const newUserMap = { ...userMap };
+    let { userMap } = getState().export.exportMaps;
 
     // Lookup User and create mapping if one does not exist
-    if (!newUserMap[userId]) {
+    if (!userMap[userId]) {
       const { success, data } = await new DiscordService().getUser(
         token,
         userId,
       );
       if (success && data) {
-        newUserMap[userId] = { ...getUserMappingData(data), guilds: {} };
+        userMap = MapUtils.set(userMap, userId, {
+          ...getUserMappingData(data),
+          guilds: {},
+        });
       }
     }
 
     // Lookup Guild Data and update mapping if User mapping exists but Guild data does not
-    if (newUserMap[userId] && !newUserMap[userId].guilds[guildId]) {
+    if (userMap[userId] && !userMap[userId].guilds[guildId]) {
       const { success, data } = await new DiscordService().fetchGuildUser(
         guildId,
         userId,
         token,
       );
-      if (success && data) {
-        newUserMap[userId].guilds[guildId] = { ...getGMOMappingData(data) };
-      } else {
-        newUserMap[userId].guilds[guildId] = { ...defaultGMOMappingData };
-      }
+      const guildData = success && data ? getGMOMappingData(data) : defaultGMOMappingData;
+
+      userMap = MapUtils.update(userMap, userId, (user) => ({
+        ...user!,
+        guilds: MapUtils.set(user!.guilds, guildId, guildData),
+      }));
     }
 
     // Add specified User to map
-    dispatch(setExportUserMap(newUserMap));
+    dispatch(setExportUserMap(userMap));
 
     // Refresh Guild Users
     dispatch(getPreFilterUsers(guildId));

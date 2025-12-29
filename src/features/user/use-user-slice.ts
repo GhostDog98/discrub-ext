@@ -4,7 +4,7 @@ import {
   setToken as setTokenAction,
   setCurrentUser as setCurrentUserAction,
   getUserData as getUserDataAction,
-  getUserDataManaully as getUserDataManaullyAction,
+  getUserDataManually as getUserDataManuallyAction,
   clearUserMapping as clearUserMappingAction,
   createUserMapping as createUserMappingAction,
 } from "./user-slice";
@@ -45,8 +45,8 @@ const useUserSlice = () => {
     dispatch(getUserDataAction());
   };
 
-  const getUserDataManaully = async (token: string): Promise<boolean> => {
-    return dispatch(getUserDataManaullyAction(token));
+  const getUserDataManually = async (token: string): Promise<boolean> => {
+    return dispatch(getUserDataManuallyAction(token));
   };
 
   const clearUserMapping = (userId: string) => {
@@ -63,7 +63,7 @@ const useUserSlice = () => {
     setToken,
     setCurrentUser,
     getUserData,
-    getUserDataManaully,
+    getUserDataManually,
     clearUserMapping,
     createUserMapping,
   };

@@ -1,10 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {
-  deleteRawMessage,
-  deleteRawReaction,
-  retrieveMessages,
-  updateRawMessage,
-} from "../message/message-slice";
+import { retrieveMessages } from "../message/message-slice";
 import { liftThreadRestrictions } from "../thread/thread-slice";
 import {
   isAppStopped,
@@ -13,22 +8,63 @@ import {
   setIsModifying,
   setModifyEntity,
 } from "../app/app-slice";
-import { PurgeState, PurgeStatus } from "./purge-types";
+import { PurgeState } from "./purge-types";
 import { AppThunk } from "../../app/store";
 import type { Channel, Message, Guild } from "discrub-lib/types/discord-types";
-import type { AppTaskStatus } from "discrub-lib/types/discrub-types";
-import {
-  isRemovableMessage,
-  isSearchComplete,
-  stringToBool,
-  stringToTypedArray,
-} from "discrub-lib/discrub-utils";
+import { isSearchComplete } from "discrub-lib/discrub-utils";
 import { isGuild } from "discrub-lib/discrub-guards";
 import { MessageData, SearchResultData } from "../message/message-types.ts";
 import { OFFSET_INCREMENT, START_OFFSET } from "../message/contants.ts";
+import {
+  PurgeService,
+  DiscordServiceAdapter,
+  ThreadManagerAdapter,
+  ModificationProgressManagerAdapter,
+} from "discrub-lib/messages";
 
 const initialState: PurgeState = {
   isLoading: null,
+};
+
+/**
+ * Helper to create PurgeService for purge operations
+ */
+const createPurgeService = (dispatch: any, getState: () => any) => {
+  const state = getState();
+  const { token, currentUser } = state.user;
+  const { settings } = state.app;
+  const { purgeRetainAttachedMedia, purgeReactionRemovalFrom } = settings;
+  const { reactionMap } = state.export.exportMaps;
+
+  if (!token) {
+    throw new Error("No token available");
+  }
+
+  const apiClient = new DiscordServiceAdapter(settings);
+  const threadManager = ThreadManagerAdapter.fromReduxDispatch(
+    async (channelId: string, knownNoPermissionIds: string[]) =>
+      await dispatch(liftThreadRestrictions(channelId, knownNoPermissionIds)),
+  );
+  const progressManager = ModificationProgressManagerAdapter.fromReduxDispatch(
+    (isModifying: boolean) => dispatch(setIsModifying(isModifying)),
+    (entity: any) => dispatch(setModifyEntity(entity)),
+  );
+
+  return new PurgeService({
+    apiClient,
+    token,
+    threadManager,
+    progressManager,
+    currentUserId: currentUser?.id,
+    existingReactionMap: reactionMap,
+    shouldStop: async () => await dispatch(isAppStopped()),
+    settings: {
+      retainAttachedMedia: purgeRetainAttachedMedia === "true",
+      reactionRemovalFrom: purgeReactionRemovalFrom
+        ? purgeReactionRemovalFrom.split(",").filter((id: string) => id.trim())
+        : [],
+    },
+  });
 };
 
 export const purgeSlice = createSlice({
@@ -121,17 +157,12 @@ export const purge =
         if (payload.offset === START_OFFSET && isResetPurge) break;
         //
 
-        await dispatch(
-          _purgeMessages(
-            payload.messages,
-            payload.threads,
-            skipThreadIds,
-            skipMessageIds,
-            {
-              totalMessages: payload.totalMessages,
-            },
-          ),
+        const result = await dispatch(
+          _purgeMessages(payload.messages, skipThreadIds, skipMessageIds, {
+            totalMessages: payload.totalMessages,
+          }),
         );
+        skipThreadIds = result.skipThreadIds;
       } while (!isSearchComplete(payload.offset, payload.totalMessages));
     }
     dispatch(resetModify());
@@ -141,130 +172,20 @@ export const purge =
 export const _purgeMessages =
   (
     messages: Message[],
-    threads: Channel[],
     skipThreadIds: string[],
     skipMessageIds: string[],
     { totalMessages }: Partial<SearchResultData> = {},
-  ): AppThunk<Promise<void>> =>
+  ): AppThunk<
+    Promise<{ skipThreadIds: string[]; processedCount: number; removedCount: number }>
+  > =>
   async (dispatch, getState) => {
-    const filteredMessages = messages.filter(
-      (m) => !skipMessageIds.some((id) => id === m.id),
+    const purgeService = createPurgeService(dispatch, getState);
+    return await purgeService.processMessages(
+      messages,
+      skipThreadIds,
+      skipMessageIds,
+      totalMessages,
     );
-    for (const [index, message] of filteredMessages.entries()) {
-      if (await dispatch(isAppStopped())) break;
-
-      skipThreadIds = await dispatch(
-        liftThreadRestrictions(message.channel_id, skipThreadIds, threads),
-      );
-
-      let modifyEntity = {
-        ...message,
-        _index: index + 1,
-        _total: Number(totalMessages) - index,
-        _status: PurgeStatus.IN_PROGRESS,
-      };
-
-      dispatch(setModifyEntity(modifyEntity));
-
-      const isMissingPermission = skipThreadIds.some(
-        (id) => id === message.channel_id,
-      );
-      if (isMissingPermission) {
-        modifyEntity._status = PurgeStatus.MISSING_PERMISSION;
-      } else {
-        const { purgeRetainAttachedMedia, purgeReactionRemovalFrom } =
-          getState().app.settings;
-        const isReactionRemoval = !!purgeReactionRemovalFrom.length;
-        const isRetainedAttachment =
-          stringToBool(purgeRetainAttachedMedia) &&
-          message?.attachments?.length;
-        if (isReactionRemoval) {
-          await dispatch(_removeMessageReactions(message, modifyEntity));
-        } else if (isRetainedAttachment) {
-          await dispatch(_retainAttachmentMessage(message, modifyEntity));
-        } else if (isRemovableMessage(message)) {
-          const success = await dispatch(deleteRawMessage(message));
-          modifyEntity._status = success
-            ? PurgeStatus.REMOVED
-            : PurgeStatus.MISSING_PERMISSION;
-        } else {
-          modifyEntity._status = PurgeStatus.MESSAGE_NON_REMOVABLE;
-        }
-      }
-      dispatch(setModifyEntity(modifyEntity));
-    }
-  };
-
-/**
- * Attempt to remove message reactions during Purge
- * @param message
- * @param modifyEntity
- */
-export const _removeMessageReactions =
-  (
-    message: Message,
-    modifyEntity: Message & AppTaskStatus,
-  ): AppThunk<Promise<void>> =>
-  async (dispatch, getState) => {
-    const { purgeReactionRemovalFrom } = getState().app.settings;
-    const unReactUserIds = stringToTypedArray<string>(purgeReactionRemovalFrom);
-    const { reactionMap } = getState().export.exportMaps;
-
-    const msgReactionMap = reactionMap[message.id] || {};
-    let total = 0;
-    let succeeded = 0;
-    for (const emoji of Object.keys(msgReactionMap)) {
-      const undoReactions = msgReactionMap[emoji].filter((e) =>
-        unReactUserIds.some((id) => id === e.id),
-      );
-      for (const reaction of undoReactions) {
-        const success = await dispatch(
-          deleteRawReaction(message.channel_id, message.id, emoji, reaction.id),
-        );
-        total = total + 1;
-        if (success) {
-          succeeded = succeeded + 1;
-        }
-      }
-    }
-
-    // Result of reaction removal for the provided message
-    let status = PurgeStatus.NO_REACTIONS_FOUND;
-    if (!!total) {
-      if (succeeded === total) {
-        status = PurgeStatus.REACTIONS_REMOVED;
-      } else if (!!succeeded && succeeded < total) {
-        status = PurgeStatus.REACTIONS_PARTIALLY_REMOVED;
-      } else if (!succeeded) {
-        status = PurgeStatus.MISSING_PERMISSION;
-      }
-    }
-    //
-
-    modifyEntity._status = status;
-  };
-
-/**
- * Attempt to retain message attachments during Purge by clearing message text only
- * @param message
- * @param modifyEntity
- */
-export const _retainAttachmentMessage =
-  (
-    message: Message,
-    modifyEntity: Message & AppTaskStatus,
-  ): AppThunk<Promise<void>> =>
-  async (dispatch, _getState) => {
-    if (message.content.length) {
-      const { success } = await dispatch(
-        updateRawMessage({ ...message, content: "" }),
-      );
-      modifyEntity._status = success
-        ? PurgeStatus.ATTACHMENTS_KEPT
-        : PurgeStatus.MISSING_PERMISSION;
-    } else {
-      modifyEntity._status = PurgeStatus.ATTACHMENTS_KEPT;
-    }
   };
 
 export default purgeSlice.reducer;

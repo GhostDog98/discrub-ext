@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { resetFilters, resetMessageData } from "../message/message-slice";
 import type { Channel } from "discrub-lib/types/discord-types";
-import { DmState, PreFilterUser, SetSelectedDmsProps } from "./dm-types";
+import { getDmName, getDmRecipients } from "discrub-lib/discrub-utils";
+import { DmState, SetSelectedDmsProps } from "./dm-types";
 import { AppThunk } from "../../app/store";
 import { DiscordService } from "discrub-lib/discord-service";
 import { resetPurgeRemovalFrom } from "../app/app-slice.ts";
@@ -23,7 +24,7 @@ export const dmSlice = createSlice({
     setDms: (state, { payload }: { payload: Channel[] }): void => {
       state.dms = payload.map((dm) => ({
         ...dm,
-        name: _getDmName(dm),
+        name: getDmName(dm),
       }));
     },
     resetDm: (state): void => {
@@ -40,17 +41,7 @@ export const dmSlice = createSlice({
       );
 
       state.selectedDms = selectedDms;
-
-      let recipients: PreFilterUser[] = [];
-      selectedDms.forEach((dm) => {
-        if (dm.recipients?.length) {
-          recipients = [
-            ...recipients,
-            ...dm.recipients.map((r) => ({ name: r.username, id: r.id })),
-          ];
-        }
-      });
-
+      const recipients = getDmRecipients(selectedDms);
       state.preFilterUsers = [...recipients, preFilterUser];
     },
   },
@@ -90,12 +81,5 @@ export const mutateSelectedDms =
       );
     }
   };
-
-const _getDmName = (dm: Channel) => {
-  const { recipients, name, id } = dm;
-  return recipients?.length === 1
-    ? recipients[0].username
-    : `${name ? "" : "Unnamed "}Group Chat - ${name || id}`;
-};
 
 export default dmSlice.reducer;

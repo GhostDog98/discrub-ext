@@ -8,7 +8,14 @@ import type {
   ExportRoleMap,
 } from "discrub-lib/types/discrub-types";
 import { ExportType } from "discrub-lib/discrub-enum";
+import type {
+  SpecialFormatting,
+  EmojiFormat,
+} from "discrub-lib/types/message-formatting-types";
 import ExportUtils from "./export-utils";
+
+// Re-export for backwards compatibility
+export type { SpecialFormatting };
 
 export type ExportState = {
   isExporting: boolean;
@@ -36,35 +43,6 @@ export type ExportMap = {
   /*************************************/
 };
 
-export type SpecialFormatting = {
-  userMention: UserMentionRef[];
-  channel: ChannelRef[];
-  underLine: UnderlineRef[];
-  code: CodeRef[];
-  italics: ItalicRef[];
-  bold: BoldRef[];
-  link: LinkRef[];
-  quote: QuoteRef[];
-  hyperLink: HyperlinkRef[];
-  emoji: EmojiRef[];
-};
-
-export type UserMentionRef = { raw: string; userName: string; id: string };
-export type ChannelRef = { channelId?: string | null; raw: string };
-export type UnderlineRef = { text: string; raw: string };
-export type CodeRef = { text: string; raw: string };
-export type ItalicRef = { text: string; raw: string };
-export type BoldRef = { text: string; raw: string };
-export type LinkRef = {
-  url: string;
-  text: string;
-  description: string;
-  raw: string;
-};
-export type QuoteRef = { text: string; raw: string };
-export type HyperlinkRef = { raw: string };
-export type EmojiRef = { raw: string; name: string; id: string };
-
 export type FilesFromMessagesProps = {
   message: Message;
   exportUtils: ExportUtils;
@@ -78,7 +56,7 @@ export type AvatarFromMessageProps = {
 };
 
 export type GetEmojiProps = {
-  emojiRef: EmojiRef;
+  emojiRef: EmojiFormat;
   isReply: boolean;
   exportView: boolean;
 };

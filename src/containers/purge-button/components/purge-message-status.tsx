@@ -6,7 +6,7 @@ import SyncIcon from "@mui/icons-material/Sync";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
 import BlurOffIcon from "@mui/icons-material/BlurOff";
-import { PurgeStatus } from "../../../features/purge/purge-types.ts";
+import { PurgeStatus } from "discrub-lib/discrub-enum";
 import "../css/purge-message-status.css";
 import classNames from "classnames";
 

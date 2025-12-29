@@ -4,7 +4,7 @@ import MessageMock from "../../message-mock/message-mock.tsx";
 import PurgeMessageStatus, {
   PURGE_MESSAGE_STATUS_ID,
 } from "./purge-message-status.tsx";
-import { PurgeStatus } from "../../../features/purge/purge-types.ts";
+import { PurgeStatus } from "discrub-lib/discrub-enum";
 import type { Message } from "discrub-lib/types/discord-types";
 import type { AppTaskStatus } from "discrub-lib/types/discrub-types";
 

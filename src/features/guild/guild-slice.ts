@@ -6,24 +6,12 @@ import {
   resetMessageData,
 } from "../message/message-slice";
 import type { Guild } from "discrub-lib/types/discord-types";
-import { sortByProperty } from "discrub-lib/discrub-utils";
-import { SortDirection } from "discrub-lib/common-enum";
+import { normalizeGuild, createPreFilterUsers } from "discrub-lib/discrub-utils";
 import { GuildState } from "./guild-types";
 import { PreFilterUser } from "../dm/dm-types";
 import { AppThunk } from "../../app/store";
 import { DiscordService } from "discrub-lib/discord-service";
 import { resetPurgeRemovalFrom } from "../app/app-slice.ts";
-
-/**
- * Normalizes a partial Guild object to ensure all required properties exist.
- * This ensures the object will pass the isGuild type guard.
- */
-const normalizeGuild = (partial: Partial<Guild>): Guild =>
-  ({
-    ...partial,
-    emojis: partial.emojis ?? [],
-    roles: partial.roles ?? [],
-  }) as Guild;
 
 const initialState: GuildState = {
   guilds: [],
@@ -139,23 +127,13 @@ export const getPreFilterUsers =
     const { currentUser } = getState().user;
     const { userMap } = getState().export.exportMaps;
     if (currentUser) {
-      const preFilterUsers: PreFilterUser[] = Object.keys(userMap).map(
-        (key) => {
-          const mapping = userMap[key];
-          return { name: mapping.userName, id: key };
-        },
+      const preFilterUsers = createPreFilterUsers(
+        userMap,
+        guildId,
+        currentUser.id,
+        currentUser.username,
       );
-
-      const filteredPreFilters: PreFilterUser[] = [
-        ...preFilterUsers.filter(
-          (mapping) =>
-            mapping.id !== currentUser.id &&
-            Boolean(userMap[mapping.id].guilds[guildId]) &&
-            mapping.name !== "User Not Found",
-        ),
-        { id: currentUser.id, name: currentUser.username },
-      ].sort((a, b) => sortByProperty(a, b, "name", SortDirection.ASCENDING));
-      dispatch(setPreFilterUsers(filteredPreFilters));
+      dispatch(setPreFilterUsers(preFilterUsers));
     }
   };
 

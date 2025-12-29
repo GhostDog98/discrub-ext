@@ -8,7 +8,7 @@ import { AppThunk } from "../../app/store";
 import type { Channel } from "discrub-lib/types/discord-types";
 import { DiscordService } from "discrub-lib/discord-service";
 import { setStatus } from "../app/app-slice.ts";
-import { getThreadEntityName } from "discrub-lib/discrub-utils";
+import { getThreadEntityName, getThreadsFromMessages as getThreadsFromMessagesUtil, filterDuplicateThreads } from "discrub-lib/discrub-utils";
 
 const initialState: ThreadState = { threads: [] };
 
@@ -48,22 +48,17 @@ export const getArchivedThreads =
         );
 
       if (publicSuccess && publicData) {
-        threadArr.concat(publicData);
+        threadArr.push(...publicData.threads);
       }
       if (privateSuccess && privateData) {
-        threadArr.concat(privateData);
+        threadArr.push(...privateData.threads);
       }
 
       if (threadArr.length) {
         dispatch(setStatus(`Retrieved ${threadArr.length} archived threads`));
       }
 
-      return threadArr.filter(
-        (archivedThread) =>
-          !knownThreads.some(
-            (knownThread) => knownThread.id === archivedThread.id,
-          ),
-      );
+      return filterDuplicateThreads(threadArr, knownThreads);
     } else {
       return [];
     }
@@ -143,17 +138,7 @@ export const getThreadsFromMessages = ({
   messages,
   knownThreads,
 }: ThreadsFromMessagesProps): Channel[] => {
-  const foundThreads: Channel[] = [];
-  messages.forEach((message) => {
-    if (message.thread && message.thread.id) {
-      foundThreads.push(message.thread);
-    }
-  });
-
-  return foundThreads.filter(
-    (thread) =>
-      !knownThreads.some((knownThread) => knownThread.id === thread.id),
-  );
+  return getThreadsFromMessagesUtil(messages, knownThreads);
 };
 
 export default threadSlice.reducer;

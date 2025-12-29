@@ -28,9 +28,9 @@ export const getFriends = (): AppThunk => async (dispatch, getState) => {
   const { token } = getState().user;
   if (token) {
     dispatch(setIsLoading(true));
-    const { success, data } = await new DiscordService(
-      settings
-    ).getRelationships(token);
+    const { success, data } = await new DiscordService(settings).getRelationships(
+      token,
+    );
     if (success && data) {
       dispatch(setFriends(data));
     } else {
@@ -60,16 +60,10 @@ export const deleteFriend =
   async (dispatch, getState) => {
     const { settings } = getState().app;
     const { token } = getState().user;
-    //   const { friends } = getState().relationship;
 
     if (token) {
       dispatch(setIsLoading(true));
-      const { success } = await new DiscordService(
-        settings
-      ).deleteFriendRequest(token, userId);
-      if (success) {
-        //   dispatch(setFriends(friends.filter((f) => f.user.id !== userId)));
-      }
+      await new DiscordService(settings).deleteFriendRequest(token, userId);
       dispatch(setIsLoading(false));
     }
   };
