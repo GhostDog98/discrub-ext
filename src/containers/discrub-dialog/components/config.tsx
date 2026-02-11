@@ -185,6 +185,7 @@ function Config({ visibleSettings = [], containerProps, isDm }: ConfigProps) {
         { value: MediaType.IMAGES, name: "Images", category: "Discord" },
         { value: MediaType.VIDEOS, name: "Videos", category: "Discord" },
         { value: MediaType.AUDIO, name: "Audio", category: "Discord" },
+        { value: MediaType.FILES, name: "Files", category: "Discord" },
 
         { value: MediaType.EMBEDDED_IMAGES, name: "Images", category: "Embed" },
         { value: MediaType.EMBEDDED_VIDEOS, name: "Videos", category: "Embed" },

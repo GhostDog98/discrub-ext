@@ -74,6 +74,7 @@ const ExportButton = ({
     (mt) => mt === MediaType.VIDEOS,
   );
   const isDownloadingAudio = downloadMedia.some((mt) => mt === MediaType.AUDIO);
+  const isDownloadingFiles = downloadMedia.some((mt) => mt === MediaType.FILES);
 
   const {
     state: channelState,
@@ -237,6 +238,9 @@ const ExportButton = ({
       }
       if (isDownloadingAudio) {
         downloadArr.push("Audio");
+      }
+      if (isDownloadingFiles) {
+        downloadArr.push("Files");
       }
       descriptionArr.push(
         `Attached & Embedded ${punctuateStringArr(downloadArr)}${

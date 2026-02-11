@@ -257,6 +257,15 @@ export const entityIsAudio = (entity: Attachment | Embed) => {
   return false;
 };
 
+export const entityIsFile = (entity: Attachment | Embed) => {
+  // Files are non-media attachments (not image, video, or audio)
+  if (isAttachment(entity)) {
+    return !entityIsImage(entity) && !entityIsVideo(entity) && !entityIsAudio(entity);
+  }
+  // Embeds are not considered files
+  return false;
+};
+
 export const entityContainsMedia = (entity: Attachment | Embed) => {
   return (
     entityIsImage(entity) || entityIsVideo(entity) || entityIsAudio(entity)
@@ -267,7 +276,7 @@ export const getMediaUrls = (entity: Attachment | Embed): string[] => {
   let urls: (string | undefined)[] = [];
 
   if (isAttachment(entity)) {
-    urls = [entity.proxy_url];
+    urls = [entity.url];
   } else {
     switch (entity.type) {
       case EmbedType.GIFV:

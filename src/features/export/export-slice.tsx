@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getMessageData, resetMessageData } from "../message/message-slice";
 import {
   entityIsAudio,
+  entityIsFile,
   entityIsImage,
   entityIsVideo,
   formatUserData,
@@ -232,6 +233,7 @@ const _downloadFilesFromMessage =
     const isDlImages = downloadMedia.some((mt) => mt === MediaType.IMAGES);
     const isDlVideos = downloadMedia.some((mt) => mt === MediaType.VIDEOS);
     const isDlAudio = downloadMedia.some((mt) => mt === MediaType.AUDIO);
+    const isDlFiles = downloadMedia.some((mt) => mt === MediaType.FILES);
     const isDlEmbedImages = downloadMedia.some(
       (mt) => mt === MediaType.EMBEDDED_IMAGES,
     );
@@ -259,11 +261,13 @@ const _downloadFilesFromMessage =
       const isImage = entityIsImage(entity);
       const isVideo = entityIsVideo(entity);
       const isAudio = entityIsAudio(entity);
+      const isFile = entityIsFile(entity);
       // As far as I'm aware, Discord does not support embedded audio.
       const shouldPerformDownload =
         (isImage && (isAttachment(entity) ? isDlImages : isDlEmbedImages)) ||
         (isVideo && (isAttachment(entity) ? isDlVideos : isDlEmbedVideos)) ||
-        (isAudio && isDlAudio);
+        (isAudio && isDlAudio) ||
+        (isFile && isDlFiles);
 
       if (shouldPerformDownload) {
         const downloadUrls = getMediaUrls(entity);

@@ -45,7 +45,7 @@ const AttachmentMock = ({ attachment }: AttachmentMockProps) => {
     (isAudio && !isPreviewingAudio);
 
   const url = entityContainsMedia(attachment)
-    ? mediaMap[attachment.proxy_url] || attachment.proxy_url
+    ? mediaMap[attachment.url] || attachment.url
     : attachment.url;
 
   const attachmentWidth = Number(attachment.width);
